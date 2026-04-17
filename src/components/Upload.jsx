@@ -4,7 +4,7 @@ const Upload = ({ onFileUpload }) => {
   return (
     <input
       type="file"
-      accept=".xlsx, .xls"
+      accept=".xlsx, .xls, .csv"
       onChange={(e) => onFileUpload(e.target.files[0])}
     />
   );

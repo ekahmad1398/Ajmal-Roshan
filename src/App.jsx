@@ -88,7 +88,7 @@ function App() {
                   <input
                     ref={fileInputRef}
                     type="file"
-                    accept=".xlsx,.xls"
+                    accept=".xlsx,.xls,.csv"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
                       if (file) handleFile(file);
@@ -101,7 +101,7 @@ function App() {
                   </div>
 
                   <h3 className="text-white font-bold text-xl mb-2">
-                    برای شروع فایل Excel را انتخاب کنید
+                    Select an Excel or CSV file to get started
                   </h3>
 
                   <p className="text-gray-300 text-sm mb-4">
@@ -110,11 +110,11 @@ function App() {
 
                   <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#4b6089] to-[#c94e12] text-white px-5 py-2.5 rounded-xl font-medium text-sm shadow-lg shadow-orange-500/20">
                     <ArrowUp className="w-4 h-4" />
-                    انتخاب فایل Excel
+                    Select Excel / CSV File
                   </div>
 
                   <p className="text-gray-400 text-xs mt-4">
-                    فرمت‌های پشتیبانی شده: .xlsx, .xls
+                    Supported formats: .xlsx, .xls, .csv
                   </p>
                 </div>
               </div>
@@ -195,7 +195,7 @@ function App() {
           <div className="screen-only text-center py-16">
             <div className="inline-flex items-center gap-3 text-white/40 text-sm bg-white/5 px-6 py-3 rounded-full border border-white/10 backdrop-blur-xl">
               <UploadCloud className="w-4 h-4" />
-              برای نمایش کارت‌ها، لطفاً یک فایل Excel انتخاب کنید
+              To preview cards, please select an Excel or CSV file
             </div>
           </div>
         )}
@@ -215,3 +215,4 @@ function App() {
 }
 
 export default App;
+
