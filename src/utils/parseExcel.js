@@ -98,8 +98,8 @@ const extractPackageFromName = (value) => {
 export const parseExcel = (file, callback) => {
   const reader = new FileReader();
 
-  reader.onload = (e) => {
-    const data = new Uint8Array(e.target.result);
+  reader.onload = (event) => {
+    const data = new Uint8Array(event.target.result);
     const workbook = XLSX.read(data, { type: "array" });
     const result = [];
     const fileNameWithoutExtension = String(file?.name ?? "").replace(/\.[^.]+$/, "");
@@ -116,8 +116,8 @@ export const parseExcel = (file, callback) => {
       const packageFromName =
         extractPackageFromName(sheetName) || extractPackageFromName(fileNameWithoutExtension);
 
-      for (let i = startRowIndex; i < rows.length; i += 1) {
-        const row = rows[i];
+      for (let index = startRowIndex; index < rows.length; index += 1) {
+        const row = rows[index];
 
         if (!row) {
           continue;
