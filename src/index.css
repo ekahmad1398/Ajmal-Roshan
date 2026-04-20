@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+:root {
+  --theme-accent: #f97316;
+  --theme-header: #062460;
+  --sheet-width: 200mm;
+  --sheet-height: 287mm;
+  --sheet-card-height: 40.23mm;
+  --sheet-columns: 3;
+  --sheet-rows: 7;
+  --sheet-gap-x: 1.15mm;
+  --sheet-gap-y: 0.9mm;
+}
+
 html,
 body,
 #root {
@@ -8,46 +20,550 @@ body,
 
 body {
   margin: 0;
-  background: linear-gradient(135deg, #0f172a, #1e3a8a);
+  background:
+    radial-gradient(circle at top, color-mix(in srgb, var(--theme-accent) 24%, transparent), transparent 36%),
+    linear-gradient(135deg, #081224, #102445 55%, #1b315c);
+  color: #fff;
+}
+
+body::selection {
+  background: color-mix(in srgb, var(--theme-accent) 45%, white);
+  color: #081224;
+}
+
+.animated-bg {
+  background:
+    radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--theme-accent) 28%, transparent), transparent 34%),
+    radial-gradient(circle at 80% 18%, color-mix(in srgb, var(--theme-header) 35%, transparent), transparent 32%),
+    linear-gradient(135deg, #060d1c, #0c1730 40%, #13264a 72%, #1b335f);
+}
+
+.animated-bg__gradient,
+.animated-bg__blob,
+.animated-bg__grid {
+  position: absolute;
+  inset: 0;
+}
+
+.animated-bg__gradient {
+  background:
+    radial-gradient(circle at center, color-mix(in srgb, var(--theme-accent) 18%, transparent), transparent 46%),
+    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.04), transparent);
+  animation: pulseGlow 9s ease-in-out infinite;
+}
+
+.animated-bg__blob {
+  inset: auto;
+  width: 34rem;
+  height: 34rem;
+  border-radius: 999px;
+  filter: blur(70px);
+  opacity: 0.28;
+  mix-blend-mode: screen;
+}
+
+.animated-bg__blob--one {
+  top: -10rem;
+  right: -8rem;
+  background: color-mix(in srgb, var(--theme-accent) 58%, white);
+  animation: floatingBlob 18s ease-in-out infinite;
+}
+
+.animated-bg__blob--two {
+  bottom: -14rem;
+  left: -10rem;
+  background: color-mix(in srgb, var(--theme-header) 76%, #7dd3fc);
+  animation: floatingBlob 22s ease-in-out infinite reverse;
+}
+
+.animated-bg__blob--three {
+  top: 40%;
+  left: 50%;
+  width: 26rem;
+  height: 26rem;
+  transform: translate(-50%, -50%);
+  background: color-mix(in srgb, var(--theme-accent) 40%, var(--theme-header));
+  animation: floatingCenter 16s ease-in-out infinite;
+}
+
+.animated-bg__grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 90px 90px;
+  mask-image: radial-gradient(circle at center, black 30%, transparent 85%);
+  opacity: 0.25;
 }
 
 .print-only {
   display: none;
 }
 
-.print-container {
+.preview-pages,
+.print-pages {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 12px;
+}
+
+.preview-pages {
+  gap: 24px;
+  justify-items: center;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.card-page {
+  box-sizing: border-box;
+  display: grid;
+  width: var(--sheet-width);
+  height: var(--sheet-height);
+  grid-template-columns: repeat(var(--sheet-columns), minmax(0, 1fr));
+  grid-template-rows: repeat(var(--sheet-rows), minmax(0, 1fr));
+  gap: var(--sheet-gap-y) var(--sheet-gap-x);
+}
+
+.preview-page {
+  overflow: hidden;
+  border-radius: 24px;
+  background: #f8fafc;
+  box-shadow:
+    0 32px 80px rgba(15, 23, 42, 0.28),
+    inset 0 0 0 1px rgba(148, 163, 184, 0.18);
+  padding: 0;
+  align-content: start;
+  direction: ltr;
 }
 
 .print-card {
   min-width: 0;
+  min-height: 0;
+  height: 100%;
+}
+
+.card-header-content {
+  min-width: 0;
+}
+
+.print-ready-card {
+  height: 100%;
+}
+
+.card-body {
+  gap: 10px;
+}
+
+.card-fields {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+}
+
+.card-row {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.card-row-split {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.card-cell {
+  display: flex;
+  min-width: 0;
+  min-height: 52px;
+  align-items: center;
+  border: 1px solid #e7edf5;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ffffff, #f8fbff);
+  padding: 10px 12px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.card-cell--accent {
+  border-color: #fed7aa;
+  background: linear-gradient(180deg, #fff7ed, #fff2e2);
+}
+
+.card-cell-content {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.card-cell-meta {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.card-cell--accent .card-cell-meta {
+  color: #ea580c;
+}
+
+.card-cell-icon {
+  flex: 0 0 auto;
+  color: #2563eb;
+}
+
+.card-cell--accent .card-cell-icon {
+  color: #ea580c;
+}
+
+.card-cell-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-cell-label--primary {
+  font-size: 16px;
+}
+
+.card-cell-label--compact {
+  font-size: 13px;
+}
+
+.card-cell-label--package {
+  font-size: 16px;
+}
+
+.card-cell-value {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  width: auto;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #0f172a;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.card-cell-value--primary {
+  font-size: 16px;
+}
+
+.card-cell-value--compact {
+  font-size: 13px;
+}
+
+.card-cell-value--package {
+  color: #c2410c;
+  font-size: 16px;
 }
 
 .footer-top-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: stretch;
-  gap: 6px;
+  gap: 8px;
+}
+
+.card-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px solid #ecf1f7;
+  padding-top: 8px;
 }
 
 .footer-phone {
   min-width: 0;
-  min-height: 28px;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid #e7edf5;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #f8fbff, #eef4fb);
+  padding: 9px 12px;
+  color: #334155;
 }
 
 .serial-badge {
-  min-height: 28px;
+  display: inline-flex;
+  min-width: 64px;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #dbe4f0;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #edf2f8, #e2e8f0);
+  padding: 9px 14px;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.serial-badge span {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
 }
 
 .footer-note {
-  min-height: 22px;
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e5ebf3;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #f8fbff, #eff4fa);
+  padding: 6px 10px;
+  color: #475569;
+  font-size: 11px;
+  line-height: 1.35;
+  text-align: center;
 }
 
-.print-pages {
-  display: grid;
-  gap: 6mm;
+.footer-phone-value {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  width: auto;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #0f172a;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.footer-phone-label .card-cell-label {
+  font-size: 13px;
+}
+
+.card-row-split > div {
+  min-width: 0;
+}
+
+.card-footer span {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.preview-page .print-card {
+  height: var(--sheet-card-height);
+}
+
+.preview-page .print-ready-card {
+  height: 100%;
+  min-height: 0;
+  border-radius: 2.4mm;
+  box-shadow: none;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-page .card-header {
+  min-height: 9.4mm;
+  padding: 0.8mm 0.95mm 1.2mm;
+  display: flex;
+  align-items: center;
+}
+
+.preview-page .card-header-content {
+  width: 100%;
+  min-height: 8.8mm;
+  padding-left: 7.8mm;
+  padding-right: 13.2mm;
+  justify-content: center;
+}
+
+.preview-page .card-wave--primary svg {
+  height: 1.9mm;
+}
+
+.preview-page .card-wave--secondary svg {
+  height: 2.7mm;
+}
+
+.preview-page .card-wave--glow svg {
+  height: 1.5mm;
+}
+
+.preview-page .card-logo-wrap {
+  width: 7.2mm;
+  height: 7.2mm;
+  flex: 0 0 7.2mm;
+}
+
+.preview-page .card-logo-img {
+  width: 5.4mm;
+  height: 5.4mm;
+}
+
+.preview-page .card-title {
+  font-size: 7.3px;
+  line-height: 1.08;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.preview-page .card-subtitle {
+  font-size: 6.5px;
+  line-height: 1.08;
+  white-space: nowrap;
+}
+
+.preview-page .card-body {
+  height: 100%;
+  padding: 0.7mm;
+  gap: 0.5mm;
+  overflow: hidden;
+  justify-content: space-between;
+}
+
+.preview-page .card-fields {
+  flex: 1 1 auto;
+  gap: 0.52mm;
+  min-height: 0;
+}
+
+.preview-page .card-row {
+  gap: 0.52mm;
+}
+
+.preview-page .card-cell {
+  min-height: 7.9mm;
+  border-radius: 1.5mm;
+  padding: 0.52mm 0.7mm;
+}
+
+.preview-page .card-cell-content {
+  gap: 0.6mm;
+}
+
+.preview-page .card-cell-meta {
+  gap: 0.42mm;
+  font-size: 4.85px;
+}
+
+.preview-page .card-cell-icon {
+  width: 1.55mm;
+  height: 1.55mm;
+}
+
+.preview-page .card-cell-value {
+  font-size: 6.6px;
+}
+
+.preview-page .card-cell-label--primary,
+.preview-page .card-cell-label--package {
+  font-size: 6.9px;
+}
+
+.preview-page .card-cell-label--compact {
+  font-size: 5.35px;
+}
+
+.preview-page .card-cell-value--primary,
+.preview-page .card-cell-value--package {
+  font-size: 6.9px;
+}
+
+.preview-page .card-cell-value--compact {
+  font-size: 5.35px;
+}
+
+.preview-page .card-footer {
+  margin-top: 0;
+  padding-top: 0.44mm;
+  gap: 0.44mm;
+  flex-shrink: 0;
+}
+
+.preview-page .footer-top-row {
+  gap: 0.6mm;
+}
+
+.preview-page .footer-phone {
+  min-height: 4.8mm;
+  padding: 0.38mm 0.58mm;
+  gap: 0.55mm;
+  border-radius: 1.25mm;
+}
+
+.preview-page .footer-phone-label {
+  font-size: 4.7px;
+}
+
+.preview-page .footer-phone-value {
+  font-size: 4.95px;
+  line-height: 1;
+}
+
+.preview-page .footer-phone-label .card-cell-label {
+  font-size: 4.95px;
+}
+
+.preview-page .serial-badge {
+  min-width: 12.5mm;
+  min-height: 4.8mm;
+  border-radius: 1.25mm;
+  padding: 0.38mm 0.58mm;
+  font-size: 4.65px;
+}
+
+.preview-page .footer-note {
+  min-height: 3mm;
+  padding: 0.18mm 0.34mm;
+  border-radius: 1.25mm;
+  font-size: 4.1px;
+  line-height: 1.2;
+}
+
+@keyframes floatingBlob {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(-24px, 28px, 0) scale(1.08);
+  }
+}
+
+@keyframes floatingCenter {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  50% {
+    transform: translate(-46%, -54%) scale(1.12);
+  }
+}
+
+@keyframes pulseGlow {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+
+  50% {
+    opacity: 0.9;
+  }
+}
+
+@media (max-width: 860px) {
+  .preview-pages {
+    justify-items: start;
+  }
 }
 
 @media print {
@@ -105,7 +621,7 @@ body {
   #printable-area {
     position: absolute !important;
     inset: 0 auto auto 0;
-    width: 200mm;
+    width: var(--sheet-width);
     margin: 0;
     padding: 0;
   }
@@ -117,13 +633,9 @@ body {
   }
 
   .print-page {
-    width: 200mm;
-    min-height: 287mm;
-    box-sizing: border-box;
-    display: grid !important;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    grid-template-rows: repeat(7, 39.8mm);
-    gap: 1.2mm 1.6mm;
+    width: var(--sheet-width);
+    min-height: var(--sheet-height);
+    grid-template-rows: repeat(var(--sheet-rows), minmax(0, 1fr));
     overflow: hidden;
     align-content: start;
     page-break-after: always;
@@ -138,9 +650,8 @@ body {
   }
 
   .print-page .print-card {
-    height: 39.8mm;
-    padding: 0.2mm;
-    box-sizing: border-box;
+    height: var(--sheet-card-height);
+    padding: 0;
     page-break-inside: avoid;
     break-inside: avoid;
     overflow: hidden;
@@ -149,7 +660,7 @@ body {
   .print-page .print-ready-card {
     height: 100% !important;
     min-height: 0;
-    border-radius: 2.6mm;
+    border-radius: 2.4mm;
     box-shadow: none !important;
     overflow: hidden !important;
     display: flex !important;
@@ -157,115 +668,156 @@ body {
   }
 
   .print-page .card-header {
-    padding: 0.9mm 1.05mm !important;
-    min-height: 8.6mm;
+    padding: 0.8mm 0.95mm 1.2mm !important;
+    min-height: 9.4mm;
     flex-shrink: 0;
     display: flex;
     align-items: center;
   }
 
-  .print-page .card-header svg {
-    height: 1.7mm !important;
+  .print-page .card-header-content {
+    width: 100% !important;
+    min-height: 8.8mm !important;
+    padding-left: 7.8mm !important;
+    padding-right: 13.2mm !important;
+    justify-content: center !important;
+  }
+
+  .print-page .card-wave--primary svg {
+    height: 1.9mm !important;
+  }
+
+  .print-page .card-wave--secondary svg {
+    height: 2.7mm !important;
+  }
+
+  .print-page .card-wave--glow svg {
+    height: 1.5mm !important;
   }
 
   .print-page .card-logo-wrap {
-    width: 6mm !important;
-    height: 6mm !important;
-    flex: 0 0 6mm;
+    width: 7.2mm !important;
+    height: 7.2mm !important;
+    flex: 0 0 7.2mm;
   }
 
   .print-page .card-logo-img {
-    width: 4.7mm !important;
-    height: 4.7mm !important;
+    width: 5.4mm !important;
+    height: 5.4mm !important;
   }
 
   .print-page .card-title {
-    font-size: 6.8px !important;
-    line-height: 1 !important;
+    font-size: 7.3px !important;
+    line-height: 1.08 !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .print-page .card-subtitle {
+    font-size: 6.5px !important;
+    line-height: 1.08 !important;
+    white-space: nowrap !important;
   }
 
   .print-page .card-body {
-    padding: 0.82mm !important;
+    padding: 0.7mm !important;
     overflow: hidden !important;
-    justify-content: flex-start !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    gap: 0.5mm !important;
   }
 
   .print-page .card-fields {
-    gap: 0.36mm !important;
+    flex: 1 1 auto;
+    gap: 0.52mm !important;
+    min-height: 0 !important;
   }
 
   .print-page .card-row {
-    padding: 0.68mm 0.82mm !important;
-    min-height: 4.9mm !important;
+    gap: 0.52mm !important;
   }
 
-  .print-page .card-row .text-\[8px\] {
-    font-size: 5.7px !important;
-    line-height: 1.08 !important;
+  .print-page .card-cell {
+    min-height: 7.9mm;
+    border-radius: 1.5mm;
+    padding: 0.52mm 0.7mm;
   }
 
-  .print-page .card-row .text-\[9px\] {
-    font-size: 6.1px !important;
-    line-height: 1.08 !important;
+  .print-page .card-cell-content {
+    gap: 0.6mm !important;
+  }
+
+  .print-page .card-cell-meta {
+    gap: 0.42mm !important;
+    font-size: 4.85px !important;
+  }
+
+  .print-page .card-cell-icon {
+    width: 1.55mm !important;
+    height: 1.55mm !important;
+  }
+
+  .print-page .card-cell-value {
+    font-size: 6.6px !important;
+  }
+
+  .print-page .card-cell-label--primary,
+  .print-page .card-cell-label--package {
+    font-size: 6.9px !important;
+  }
+
+  .print-page .card-cell-label--compact {
+    font-size: 5.35px !important;
+  }
+
+  .print-page .card-cell-value--primary,
+  .print-page .card-cell-value--package {
+    font-size: 6.9px !important;
+  }
+
+  .print-page .card-cell-value--compact {
+    font-size: 5.35px !important;
   }
 
   .print-page .card-footer {
-    margin-top: 0.38mm !important;
-    padding-top: 0.3mm !important;
-    gap: 0.24mm !important;
+    margin-top: 0 !important;
+    padding-top: 0.44mm !important;
+    gap: 0.44mm !important;
     flex-shrink: 0;
   }
 
   .print-page .footer-top-row {
-    display: grid !important;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: stretch !important;
     gap: 0.6mm !important;
   }
 
   .print-page .footer-phone {
-    display: flex !important;
-    align-items: center !important;
-    min-height: 4.1mm;
-    padding: 0.38mm 0.72mm !important;
-    flex: 1 1 auto;
-    border-radius: 0.9mm !important;
-    background: #f8fafc !important;
-    overflow: hidden !important;
+    min-height: 4.8mm;
+    padding: 0.38mm 0.58mm !important;
+    gap: 0.55mm !important;
+    border-radius: 1.25mm !important;
   }
 
-  .print-page .footer-phone span[dir="ltr"] {
-    max-width: 100% !important;
-    font-size: 5.1px !important;
+  .print-page .footer-phone-label {
+    font-size: 4.7px !important;
+  }
+
+  .print-page .footer-phone-value {
+    font-size: 4.95px !important;
     line-height: 1 !important;
   }
 
-  .print-page .card-footer .text-\[8px\] {
-    font-size: 4.8px !important;
-    line-height: 1.05 !important;
-  }
-
-  .print-page .card-footer .text-\[7px\] {
-    font-size: 4.4px !important;
-    line-height: 1 !important;
-  }
-
-  .print-page .card-footer .text-\[6px\] {
-    font-size: 4px !important;
-    line-height: 1 !important;
+  .print-page .footer-phone-label .card-cell-label {
+    font-size: 4.95px !important;
   }
 
   .print-page .card-footer .serial-badge {
-    border-radius: 1mm !important;
-    min-width: 14mm;
-    min-height: 4.1mm;
-    padding: 0.34mm 0.82mm !important;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex: 0 0 auto;
-    background: #f1f5f9 !important;
-    overflow: hidden !important;
+    border-radius: 1.25mm !important;
+    min-width: 12.5mm;
+    min-height: 4.8mm;
+    padding: 0.38mm 0.58mm !important;
+    font-size: 4.65px !important;
   }
 
   .print-page .serial-badge span {
@@ -275,32 +827,13 @@ body {
   }
 
   .print-page .footer-note {
-    min-height: 3.2mm;
-    padding: 0.25mm 0.6mm !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    min-height: 3mm;
+    padding: 0.18mm 0.34mm !important;
+    border-radius: 1.25mm !important;
+    font-size: 4.1px !important;
+    line-height: 1.2 !important;
   }
 
-  .print-page .h-2\.5,
-  .print-page .w-2\.5 {
-    height: 1.05mm !important;
-    width: 1.05mm !important;
-  }
-
-  .print-page .h-3,
-  .print-page .w-3 {
-    height: 1.5mm !important;
-    width: 1.5mm !important;
-  }
-
-  .print-page .h-3\.5,
-  .print-page .w-3\.5 {
-    height: 1.72mm !important;
-    width: 1.72mm !important;
-  }
-
-  .print-page .card-title,
   .print-page .card-row span,
   .print-page .card-footer span {
     max-width: 100%;

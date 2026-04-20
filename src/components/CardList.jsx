@@ -1,3 +1,4 @@
+import { memo, useMemo } from "react";
 import Card from "./Card";
 
 const PAGE_SIZE = 21;
@@ -13,36 +14,26 @@ const chunkCards = (data) => {
 };
 
 const CardList = ({ data, paginate = false }) => {
-  if (paginate) {
-    const pages = chunkCards(data);
-
-    return (
-      <div className="print-pages">
-        {pages.map((page, pageIndex) => (
-          <div className="print-page" key={`page-${pageIndex}`}>
-            {page.map((item, cardIndex) => (
-              <div
-                className="print-card"
-                key={`page-${pageIndex}-card-${item.serialNumber ?? cardIndex}`}
-              >
-                <Card item={item} />
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
-    );
-  }
+  const pages = useMemo(() => chunkCards(data), [data]);
+  const pagesClassName = paginate ? "print-pages" : "preview-pages";
+  const pageClassName = paginate ? "card-page print-page" : "card-page preview-page";
 
   return (
-    <div className="print-container">
-      {data.map((item, index) => (
-        <div className="print-card" key={item.serialNumber ?? index}>
-          <Card item={item} />
+    <div className={pagesClassName}>
+      {pages.map((page, pageIndex) => (
+        <div className={pageClassName} key={`page-${pageIndex}`}>
+          {page.map((item, cardIndex) => (
+            <div
+              className="print-card"
+              key={`page-${pageIndex}-card-${item.serialNumber ?? cardIndex}`}
+            >
+              <Card item={item} />
+            </div>
+          ))}
         </div>
       ))}
     </div>
   );
 };
 
-export default CardList;
+export default memo(CardList);

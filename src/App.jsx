@@ -1,6 +1,7 @@
-import React, { useRef, useState } from "react";
+import React, { useDeferredValue, useMemo, useRef, useState } from "react";
 import {
   ArrowUp,
+  CheckCircle2,
   FileSpreadsheet,
   Palette,
   Phone,
@@ -18,15 +19,23 @@ const initialFormState = {
   agencyName: "",
   phoneNumber: "",
   headerColor: "#062460",
+  backgroundColor: "#f97316",
 };
 
 function App() {
   const [rows, setRows] = useState([]);
   const [fileName, setFileName] = useState("");
   const [cardMeta, setCardMeta] = useState(initialFormState);
+  const [isDragActive, setIsDragActive] = useState(false);
   const fileInputRef = useRef(null);
+  const dragCounterRef = useRef(0);
+  const deferredCardMeta = useDeferredValue(cardMeta);
 
   const handleFile = (file) => {
+    if (!file) {
+      return;
+    }
+
     setFileName(file.name);
     parseExcel(file, (result) => {
       setRows(result);
@@ -42,6 +51,8 @@ function App() {
     setRows([]);
     setFileName("");
     setCardMeta(initialFormState);
+    setIsDragActive(false);
+    dragCounterRef.current = 0;
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -52,32 +63,76 @@ function App() {
     window.print();
   };
 
-  const cards = rows.map((item, index) => ({
-    ...item,
-    package: cardMeta.packageName.trim() || item.package || "بدون بسته",
-    agencyName: cardMeta.agencyName.trim() || "نمایندگی ثبت نشده",
-    phoneNumber: cardMeta.phoneNumber.trim() || "شماره تماس ثبت نشده",
-    headerColor: cardMeta.headerColor || "#062460",
-    serialNumber: index + 1,
-  }));
+  const handleDragEnter = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    dragCounterRef.current += 1;
+    setIsDragActive(true);
+  };
+
+  const handleDragOver = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    event.dataTransfer.dropEffect = "copy";
+    setIsDragActive(true);
+  };
+
+  const handleDragLeave = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    dragCounterRef.current = Math.max(dragCounterRef.current - 1, 0);
+
+    if (dragCounterRef.current === 0) {
+      setIsDragActive(false);
+    }
+  };
+
+  const handleDrop = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    dragCounterRef.current = 0;
+    setIsDragActive(false);
+
+    const file = event.dataTransfer.files?.[0];
+    handleFile(file);
+  };
+
+  const cards = useMemo(
+    () =>
+      rows.map((item, index) => ({
+        ...item,
+        package: deferredCardMeta.packageName.trim() || item.package || "بدون بسته",
+        agencyName: deferredCardMeta.agencyName.trim() || "نمایندگی ثبت نشده",
+        phoneNumber: deferredCardMeta.phoneNumber.trim() || "شماره تماس ثبت نشده",
+        serialNumber: `#${index + 1}`,
+      })),
+    [rows, deferredCardMeta.packageName, deferredCardMeta.agencyName, deferredCardMeta.phoneNumber],
+  );
+
+  const pageStyle = useMemo(
+    () => ({
+      "--theme-accent": deferredCardMeta.backgroundColor,
+      "--theme-header": deferredCardMeta.headerColor,
+    }),
+    [deferredCardMeta.backgroundColor, deferredCardMeta.headerColor],
+  );
 
   return (
-    <div
-      className="app-shell min-h-screen font-[Calibri]"
-      style={{ background: "linear-gradient(135deg, #4b6089, #062460, #c94e12)" }}
-    >
-      <div className="screen-only fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-orange-500/10 blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-blue-500/10 blur-3xl animate-pulse delay-1000" />
-        <div className="absolute left-1/2 top-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-500/5 blur-3xl" />
+    <div className="app-shell min-h-screen font-[Calibri]" style={pageStyle}>
+      <div className="screen-only animated-bg pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="animated-bg__gradient" />
+        <div className="animated-bg__blob animated-bg__blob--one" />
+        <div className="animated-bg__blob animated-bg__blob--two" />
+        <div className="animated-bg__blob animated-bg__blob--three" />
+        <div className="animated-bg__grid" />
       </div>
 
-      <header className="screen-only relative border-b border-white/10 bg-black/20 backdrop-blur-2xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
+      <header className="screen-only relative border-b border-white/10 bg-slate-950/30 backdrop-blur-2xl">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-5 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-center gap-4">
             <div className="relative">
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-[#4b6089] to-[#c94e12] blur-lg opacity-40" />
-              <div className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl border border-white/20 bg-gradient-to-br from-[#4b6089] to-[#c94e12] shadow-2xl">
+              <div className="absolute inset-0 rounded-2xl bg-[linear-gradient(135deg,var(--theme-accent),var(--theme-header))] blur-lg opacity-45" />
+              <div className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl border border-white/20 bg-[linear-gradient(135deg,var(--theme-header),var(--theme-accent))] shadow-2xl">
                 <img
                   src="/logo.png"
                   alt="Ajmal Roshan"
@@ -85,70 +140,109 @@ function App() {
                 />
               </div>
             </div>
+
             <div dir="rtl">
-              <h1 className="text-xl font-black tracking-tight text-white">اجمل روشان</h1>
-              <p className="text-xs tracking-widest text-orange-200/80">
-                AJMAL ROSHAN FASTEST FORVER
+              <h1 className="text-xl font-black tracking-tight text-white sm:text-2xl">
+                اجمل روشان
+              </h1>
+              <p className="text-xs tracking-[0.35em] text-orange-100/70">
+                AJMAL ROSHAN FASTEST FOREVER
               </p>
             </div>
           </div>
 
-          {cards.length > 0 && (
-            <div
-              dir="rtl"
-              className="rounded-2xl border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-xl"
-            >
-              <span className="text-sm font-medium text-white/90">
-                <span className="ml-1 font-bold text-orange-300" dir="ltr">
-                  {cards.length}
-                </span>
-                کارت آماده
+          <div className="flex flex-wrap items-center gap-3 self-start lg:self-auto">
+            <label className="flex items-center gap-3 rounded-2xl border border-white/15 bg-white/10 px-3 py-2 text-white backdrop-blur-xl">
+              <Palette className="h-4 w-4 text-orange-300" />
+              <span dir="rtl" className="text-sm font-medium">
+                رنگ بک‌گراند
               </span>
-            </div>
-          )}
+              <input
+                name="backgroundColor"
+                type="color"
+                value={cardMeta.backgroundColor}
+                onChange={handleMetaChange}
+                className="h-10 w-12 cursor-pointer rounded-lg border border-white/15 bg-transparent"
+              />
+            </label>
+
+            {cards.length > 0 && (
+              <div
+                dir="rtl"
+                className="rounded-2xl border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-xl"
+              >
+                <span className="text-sm font-medium text-white/90">
+                  <span className="ml-1 font-bold text-orange-300" dir="ltr">
+                    {cards.length}
+                  </span>
+                  کارت آماده
+                </span>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
-      <main className="relative mx-auto max-w-7xl px-6 py-10">
-        <div className="content-shell rounded-2xl border border-white/20 bg-white/5 p-8 backdrop-blur-xl">
+      <main className="relative mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-10">
+        <div className="content-shell rounded-[28px] border border-white/15 bg-slate-950/25 p-4 backdrop-blur-2xl sm:p-6 lg:p-8">
           <div className="screen-only mb-8">
             {!fileName ? (
               <div className="group relative">
-                <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-[#4b6089] to-[#c94e12] blur-xl opacity-30 transition duration-500 group-hover:opacity-50" />
+                <div className="absolute -inset-1 rounded-[32px] bg-[linear-gradient(120deg,var(--theme-header),var(--theme-accent))] blur-xl opacity-35 transition duration-500 group-hover:opacity-55" />
 
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className="relative cursor-pointer rounded-2xl border border-white/20 bg-white/5 p-12 text-center transition-all duration-300 hover:bg-white/10"
+                  onDragEnter={handleDragEnter}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  className={`relative cursor-pointer rounded-[28px] border p-8 text-center transition-all duration-300 sm:p-12 ${
+                    isDragActive
+                      ? "border-orange-300 bg-white/15 shadow-2xl shadow-orange-500/20"
+                      : "border-white/20 bg-white/5 hover:bg-white/10"
+                  }`}
                 >
                   <input
                     ref={fileInputRef}
                     type="file"
                     accept=".xlsx,.xls,.csv"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) handleFile(file);
+                    onChange={(event) => {
+                      const file = event.target.files?.[0];
+                      handleFile(file);
                     }}
                     className="hidden"
                   />
 
-                  <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-2xl border-2 border-dashed border-orange-400/50 bg-gradient-to-br from-[#4b6089]/20 to-[#c94e12]/20 transition-all duration-300 group-hover:scale-110 group-hover:border-orange-400">
-                    <UploadCloud className="h-10 w-10 text-orange-300" />
+                  <div
+                    className={`mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-3xl border-2 border-dashed transition-all duration-300 ${
+                      isDragActive
+                        ? "scale-110 border-orange-300 bg-orange-400/20"
+                        : "border-orange-400/50 bg-[linear-gradient(135deg,rgba(6,36,96,0.3),rgba(249,115,22,0.2))] group-hover:scale-110 group-hover:border-orange-400"
+                    }`}
+                  >
+                    <UploadCloud className="h-10 w-10 text-orange-200" />
                   </div>
 
-                  <h3 className="mb-2 text-xl font-bold text-white">
-                    Select an Excel or CSV file to get started
+                  <h3 className="mb-2 text-xl font-bold text-white sm:text-2xl">
+                    {isDragActive
+                      ? "فایل را همین‌جا رها کنید"
+                      : "فایل Excel یا CSV را انتخاب یا درگ کنید"}
                   </h3>
 
-                  <p dir="rtl" className="mb-4 text-sm text-gray-300">
-                    روی این باکس کلیک کنید یا فایل را انتخاب نمایید
+                  <p dir="rtl" className="mx-auto mb-5 max-w-2xl text-sm leading-7 text-slate-200">
+                    حالا هم با کلیک و هم با درگ‌ودراپ فایل گرفته می‌شود. فقط فایل‌های
+                    <span dir="ltr" className="px-1 font-semibold text-orange-200">
+                      .xlsx .xls .csv
+                    </span>
+                    پشتیبانی می‌شوند.
                   </p>
 
-                  <div className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#4b6089] to-[#c94e12] px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-orange-500/20">
+                  <div className="inline-flex items-center gap-2 rounded-2xl bg-[linear-gradient(120deg,var(--theme-header),var(--theme-accent))] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-orange-500/20">
                     <ArrowUp className="h-4 w-4" />
-                    Select Excel / CSV File
+                    انتخاب فایل
                   </div>
 
-                  <p className="mt-4 text-xs text-gray-400">
+                  <p className="mt-4 text-xs text-slate-300/75">
                     Supported formats: .xlsx, .xls, .csv
                   </p>
                 </div>
@@ -156,46 +250,49 @@ function App() {
             ) : (
               <div className="space-y-6">
                 <div className="group relative">
-                  <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-[#4b6089] to-[#c94e12] blur-lg opacity-20" />
+                  <div className="absolute -inset-1 rounded-[28px] bg-[linear-gradient(120deg,var(--theme-header),var(--theme-accent))] blur-lg opacity-20" />
 
-                  <div className="relative rounded-2xl border border-white/20 bg-white/10 p-6 backdrop-blur-xl">
-                    <div className="flex items-center justify-between gap-4">
+                  <div className="relative rounded-[26px] border border-white/20 bg-white/10 p-4 backdrop-blur-xl sm:p-6">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                       <div className="flex items-center gap-4">
-                        <div className="flex h-14 w-14 items-center justify-center rounded-xl border border-orange-400/30 bg-gradient-to-br from-[#4b6089]/30 to-[#c94e12]/30">
+                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-orange-400/30 bg-[linear-gradient(135deg,rgba(6,36,96,0.35),rgba(249,115,22,0.3))]">
                           <FileSpreadsheet className="h-7 w-7 text-orange-300" />
                         </div>
+
                         <div dir="rtl">
-                          <p className="mb-1 text-lg font-bold text-white">{fileName}</p>
-                          <p className="flex items-center gap-1 text-sm text-green-400">
-                            <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
+                          <p className="mb-1 break-all text-lg font-bold text-white">{fileName}</p>
+                          <p className="flex items-center gap-2 text-sm text-emerald-400">
+                            <CheckCircle2 className="h-4 w-4" />
                             <span dir="ltr">{cards.length}</span>
-                            رکورد با موفقیت بارگذاری شد
+                            ریکورد با موفقیت بارگذاری شد
                           </p>
                         </div>
                       </div>
+
                       <button
                         onClick={clearFile}
-                        className="group/btn rounded-xl border border-transparent p-3 transition-all duration-200 hover:border-red-500/30 hover:bg-red-500/20"
+                        className="group/btn self-end rounded-2xl border border-transparent p-3 transition-all duration-200 hover:border-red-500/30 hover:bg-red-500/20 sm:self-auto"
                       >
-                        <X className="h-5 w-5 text-gray-400 transition-colors group-hover/btn:text-red-400" />
+                        <X className="h-5 w-5 text-slate-300 transition-colors group-hover/btn:text-red-400" />
                       </button>
                     </div>
                   </div>
                 </div>
 
-                <div className="rounded-2xl border border-white/15 bg-slate-950/20 p-5 backdrop-blur-xl">
+                <div className="rounded-[26px] border border-white/15 bg-slate-950/30 p-4 backdrop-blur-xl sm:p-5">
                   <div dir="rtl" className="mb-4">
-                    <h2 className="text-lg font-bold text-white">مشخصات کارت</h2>
-                    <p className="text-sm text-white/65">
-                      بعد از آپلود فایل، معلومات دلخواه را وارد کنید تا روی تمام کارت‌ها نمایش داده شود.
+                    <h2 className="text-lg font-bold text-white sm:text-xl">نمایندگی</h2>
+                    <p className="text-sm leading-7 text-white/65">
+                      این معلومات روی همه کارت‌ها اعمال می‌شود. چیدمان فرم هم برای موبایل و
+                      هم برای صفحه‌های بزرگ مرتب شده است.
                     </p>
                   </div>
 
-                  <div className="grid gap-4 md:grid-cols-3">
-                    <label className="block">
+                  <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-12">
+                    <label className="block xl:col-span-3">
                       <span className="mb-2 flex items-center gap-2 text-sm text-white/80" dir="rtl">
                         <WalletCards className="h-4 w-4 text-orange-300" />
-                        نام بسته
+                        نوعیت بسته
                       </span>
                       <input
                         name="packageName"
@@ -203,29 +300,29 @@ function App() {
                         onChange={handleMetaChange}
                         dir="rtl"
                         placeholder="مثلاً 20MB Unlimited"
-                        className="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/35 focus:border-orange-400"
+                        className="w-full rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/35 focus:border-orange-400"
                       />
                     </label>
 
-                    <label className="block">
+                    <label className="block xl:col-span-4">
                       <span className="mb-2 flex items-center gap-2 text-sm text-white/80" dir="rtl">
                         <UserSquare2 className="h-4 w-4 text-orange-300" />
-                        نام نمایندگی
+                        مشخصات / نام نمایندگی
                       </span>
                       <input
                         name="agencyName"
                         value={cardMeta.agencyName}
                         onChange={handleMetaChange}
                         dir="rtl"
-                        placeholder="مثلاً نمایندگی دشت برچی"
-                        className="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/35 focus:border-orange-400"
+                        placeholder="مثلاً بلخ دشت برچی"
+                        className="w-full rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/35 focus:border-orange-400"
                       />
                     </label>
 
-                    <label className="block">
+                    <label className="block xl:col-span-3">
                       <span className="mb-2 flex items-center gap-2 text-sm text-white/80" dir="rtl">
                         <Phone className="h-4 w-4 text-orange-300" />
-                        شماره تماس
+                        رمز / شماره تماس
                       </span>
                       <input
                         name="phoneNumber"
@@ -233,22 +330,22 @@ function App() {
                         onChange={handleMetaChange}
                         dir="ltr"
                         placeholder="07XXXXXXXX"
-                        className="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/35 focus:border-orange-400"
+                        className="w-full rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/35 focus:border-orange-400"
                       />
                     </label>
 
-                    <label className="block md:col-span-3">
+                    <label className="block md:col-span-2 xl:col-span-2">
                       <span className="mb-2 flex items-center gap-2 text-sm text-white/80" dir="rtl">
                         <Palette className="h-4 w-4 text-orange-300" />
                         رنگ هیدر کارت
                       </span>
-                      <div className="flex items-center gap-3 rounded-xl border border-white/15 bg-white/10 px-3 py-2">
+                      <div className="flex items-center gap-3 rounded-2xl border border-white/15 bg-white/10 px-3 py-2">
                         <input
                           name="headerColor"
                           type="color"
                           value={cardMeta.headerColor}
                           onChange={handleMetaChange}
-                          className="h-10 w-14 cursor-pointer rounded border border-white/15 bg-transparent"
+                          className="h-10 w-14 cursor-pointer rounded-lg border border-white/15 bg-transparent"
                         />
                         <input
                           name="headerColor"
@@ -256,7 +353,7 @@ function App() {
                           onChange={handleMetaChange}
                           dir="ltr"
                           placeholder="#062460"
-                          className="flex-1 bg-transparent text-sm text-white outline-none placeholder:text-white/35"
+                          className="min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-white/35"
                         />
                       </div>
                     </label>
@@ -267,13 +364,13 @@ function App() {
           </div>
 
           {cards.length > 0 && (
-            <div className="screen-only mb-8 flex justify-end">
+            <div className="screen-only mb-8 flex justify-center sm:justify-end">
               <button
                 onClick={handlePrint}
-                className="group relative cursor-pointer overflow-hidden rounded-2xl bg-gradient-to-r from-[#4b6089] to-[#c94e12] px-8 py-4 text-base font-bold text-white shadow-2xl shadow-orange-500/30 transition-all duration-300 hover:scale-105 hover:shadow-orange-500/50"
+                className="group relative w-full max-w-xs cursor-pointer overflow-hidden rounded-2xl bg-[linear-gradient(120deg,var(--theme-header),var(--theme-accent))] px-6 py-4 text-base font-bold text-white shadow-2xl shadow-orange-500/30 transition-all duration-300 hover:scale-[1.02] hover:shadow-orange-500/50 sm:w-auto sm:max-w-none sm:px-8"
               >
                 <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-white/0 via-white/20 to-white/0 transition-transform duration-700 group-hover:translate-x-full" />
-                <span className="relative flex items-center gap-3">
+                <span className="relative flex items-center justify-center gap-3">
                   <Printer className="h-5 w-5" />
                   چاپ <span dir="ltr">{cards.length}</span> کارت
                 </span>
@@ -283,13 +380,13 @@ function App() {
 
           {cards.length > 0 && (
             <div className="relative">
-              <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-[#4b6089]/30 to-[#c94e12]/30 blur-lg" />
+              <div className="absolute -inset-1 rounded-[32px] bg-[linear-gradient(120deg,var(--theme-header),var(--theme-accent))] blur-lg opacity-30" />
 
-              <div className="screen-only relative rounded-2xl border border-white/20 bg-white/5 p-8 backdrop-blur-xl">
-                <div className="mb-6 flex items-center gap-3" dir="rtl">
-                  <div className="h-7 w-1.5 rounded-full bg-gradient-to-b from-[#4b6089] to-[#c94e12]" />
-                  <h2 className="text-lg font-bold text-white">پیش‌نمایش کارت‌ها</h2>
-                  <span className="mr-auto text-sm text-white/40" dir="ltr">
+              <div className="screen-only relative rounded-[28px] border border-white/20 bg-white/5 p-4 backdrop-blur-xl sm:p-6 lg:p-8">
+                <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3" dir="rtl">
+                  <div className="h-7 w-1.5 rounded-full bg-[linear-gradient(to_bottom,var(--theme-header),var(--theme-accent))]" />
+                  <h2 className="text-lg font-bold text-white sm:text-xl">پیش‌نمایش کارت‌ها</h2>
+                  <span className="text-sm text-white/40 sm:mr-auto" dir="ltr">
                     {cards.length} عدد
                   </span>
                 </div>
@@ -305,19 +402,19 @@ function App() {
 
           {cards.length === 0 && !fileName && (
             <div className="screen-only py-16 text-center">
-              <div className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-6 py-3 text-sm text-white/40 backdrop-blur-xl">
+              <div className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-6 py-3 text-sm text-white/50 backdrop-blur-xl">
                 <UploadCloud className="h-4 w-4" />
-                To preview cards, please select an Excel or CSV file
+                برای دیدن کارت‌ها فایل Excel یا CSV را انتخاب کنید
               </div>
             </div>
           )}
         </div>
       </main>
 
-      <footer className="screen-only relative mt-auto border-t border-white/10 bg-black/20 backdrop-blur-xl">
-        <div className="mx-auto max-w-7xl px-6 py-5 text-center">
-          <p dir="rtl" className="text-xs tracking-wider text-gray-400">
-            © 2026 شرکت خدمات انترنی اجمل روشان · تمامی حقوق محفوظ است
+      <footer className="screen-only relative mt-auto border-t border-white/10 bg-slate-950/30 backdrop-blur-xl">
+        <div className="mx-auto max-w-7xl px-4 py-5 text-center sm:px-6">
+          <p dir="rtl" className="text-xs tracking-wider text-slate-300/70">
+            © 2026 شرکت خدمات انترنتی اجمل روشان · تمامی حقوق محفوظ است
           </p>
         </div>
       </footer>

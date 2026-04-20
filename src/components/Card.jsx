@@ -1,6 +1,6 @@
+import { createElement, memo } from "react";
 import {
   Building2,
-  Hash,
   Lock,
   Package,
   Phone,
@@ -9,15 +9,43 @@ import {
   Wifi,
 } from "lucide-react";
 
+const InfoCell = ({
+  icon,
+  label,
+  value,
+  valueDir = "rtl",
+  tone = "default",
+  labelClassName = "",
+  valueClassName = "",
+}) => {
+  const cellClassName = tone === "accent" ? "card-cell card-cell--accent" : "card-cell";
+
+  return (
+    <div className={cellClassName}>
+      <div className="card-cell-content">
+        <span className="card-cell-meta">
+          {createElement(icon, { className: "card-cell-icon" })}
+          <span className={`card-cell-label ${labelClassName}`.trim()}>{label}</span>
+        </span>
+
+        <span dir={valueDir} className={`card-cell-value ${valueClassName}`.trim()}>
+          {value}
+        </span>
+      </div>
+    </div>
+  );
+};
+
+const headerStyle = {
+  background: "linear-gradient(to left, #4b6089, var(--theme-header, #062460), var(--theme-accent, #f97316))",
+};
+
 const Card = ({ item }) => {
-  const headerStyle = {
-    background: `linear-gradient(to left, #4b6089, ${item.headerColor || "#062460"}, #c94e12)`,
-  };
 
   return (
     <div
       dir="rtl"
-      className="print-ready-card flex h-full w-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white font-[Calibri] shadow-md"
+      className="print-ready-card flex h-full w-full flex-col overflow-hidden rounded-[20px] border border-slate-200 bg-white font-[Calibri] shadow-md"
     >
       <div
         className="card-header relative overflow-hidden px-2.5 py-2 text-white"
@@ -27,16 +55,17 @@ const Card = ({ item }) => {
           <div className="absolute -right-4 top-1 h-6 w-24 rounded-full bg-white/20 blur-md" />
           <div className="absolute left-6 top-3 h-5 w-20 rounded-full bg-white/15 blur-md" />
         </div>
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-between px-3 opacity-10">
-          <Router className="h-4 w-4" />
-          <Wifi className="h-4 w-4" />
+
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-between px-3 opacity-30">
+          <Router className="h-4.5 w-4.5" />
+          <Wifi className="h-4.5 w-4.5" />
         </div>
 
-        <div className="absolute inset-x-0 bottom-0 overflow-hidden leading-none">
+        <div className="card-wave card-wave--primary absolute inset-x-0 bottom-0 overflow-hidden leading-none opacity-90">
           <svg
             viewBox="0 0 400 32"
             preserveAspectRatio="none"
-            className="block h-3 w-full text-white/15"
+            className="block h-3.5 w-full text-white/25"
             aria-hidden="true"
           >
             <path
@@ -46,89 +75,111 @@ const Card = ({ item }) => {
           </svg>
         </div>
 
-        <div className="relative flex items-center gap-2">
-          <div className="card-logo-wrap flex h-9 w-9 items-center justify-center rounded-lg border border-white/30 bg-white/90 shadow-sm">
-            <img src="/logo.png" alt="logo" className="card-logo-img h-7 w-7 object-contain" />
+        <div className="card-wave card-wave--secondary absolute inset-x-0 bottom-0 overflow-hidden leading-none opacity-80">
+          <svg
+            viewBox="0 0 400 42"
+            preserveAspectRatio="none"
+            className="block h-4.5 w-full text-white/35"
+            aria-hidden="true"
+          >
+            <path
+              d="M0 23 C 30 6, 72 37, 112 21 S 188 3, 224 18 S 300 39, 340 23 S 382 10, 400 15 L400 42 L0 42 Z"
+              fill="currentColor"
+            />
+          </svg>
+        </div>
+
+        <div className="card-wave card-wave--glow absolute inset-x-0 bottom-[1px] overflow-hidden leading-none opacity-45">
+          <svg
+            viewBox="0 0 400 30"
+            preserveAspectRatio="none"
+            className="block h-2.5 w-full text-orange-100/50"
+            aria-hidden="true"
+          >
+            <path
+              d="M0 20 C 40 8, 78 26, 120 18 S 198 7, 238 16 S 314 28, 356 18 S 388 10, 400 13 L400 30 L0 30 Z"
+              fill="currentColor"
+            />
+          </svg>
+        </div>
+
+        <div className="card-header-content relative flex min-h-[44px] items-center justify-center pl-10 pr-14">
+          <div className="min-w-0 text-center">
+            <h1 className="card-title text-[11px] font-extrabold leading-tight">
+              شرکت خدمات انترنتی اجمل روشان
+            </h1>
+            <p className="card-subtitle text-[8px] text-white/80">
+              Ajmal Roshan Fastest Forever
+            </p>
           </div>
 
-          <div className="min-w-0 flex-1">
-            <h1 className="card-title truncate text-[12px] font-extrabold leading-tight">
-              شرکت خدمات انترنی اجمل روشان
-            </h1>
-            <p className="text-[8px] text-white/80">Ajmal Roshan Fastest Forver</p>
+          <div className="card-logo-wrap absolute right-0 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-xl border border-white/30 bg-white/90 shadow-sm">
+            <img src="/logo.png" alt="logo" className="card-logo-img h-8.5 w-8.5 object-contain" />
           </div>
         </div>
       </div>
 
-      <div className="card-body flex flex-1 flex-col p-2">
-        <div className="card-fields flex flex-col gap-0.5">
-          <div className="card-row flex items-center gap-1 rounded-md border border-slate-100 bg-slate-50 px-2 py-1.5">
-            <div className="flex items-center gap-1 text-slate-500">
-              <User className="h-3.5 w-3.5 text-blue-600" />
-              <span className="text-[8px] font-semibold">نام کاربری</span>
-            </div>
-            <span className="flex-1" />
-            <span dir="ltr" className="text-[9px] font-bold tracking-wide text-slate-900">
-              {item.username}
-            </span>
+      <div className="card-body flex h-full flex-1 flex-col justify-between p-2">
+        <div className="card-fields">
+          <div className="card-row card-row-split">
+            <InfoCell
+              icon={User}
+              label="نام کاربری"
+              value={item.username}
+              valueDir="ltr"
+              labelClassName="card-cell-label--primary"
+              valueClassName="card-cell-value--primary"
+            />
+            <InfoCell
+              icon={Lock}
+              label="رمز"
+              value={item.password}
+              valueDir="ltr"
+              labelClassName="card-cell-label--primary"
+              valueClassName="card-cell-value--primary"
+            />
           </div>
 
-          <div className="card-row flex items-center gap-1 rounded-md border border-slate-100 bg-slate-50 px-2 py-1.5">
-            <div className="flex items-center gap-1 text-slate-500">
-              <Lock className="h-3.5 w-3.5 text-blue-600" />
-              <span className="text-[8px] font-semibold">رمز عبور</span>
-            </div>
-            <span className="flex-1" />
-            <span dir="ltr" className="text-[9px] font-bold tracking-wider text-slate-900">
-              {item.password}
-            </span>
-          </div>
-
-          <div className="card-row flex items-center gap-1 rounded-md border border-orange-200 bg-orange-50 px-2 py-1.5">
-            <div className="flex items-center gap-1 text-orange-700">
-              <Package className="h-3.5 w-3.5" />
-              <span className="text-[8px] font-semibold">بسته</span>
-            </div>
-            <span className="flex-1" />
-            <span className="max-w-[58%] truncate text-[9px] font-extrabold text-orange-800">
-              {item.package}
-            </span>
-          </div>
-
-          <div className="card-row flex items-center gap-1 rounded-md border border-slate-100 bg-slate-50 px-2 py-1.5">
-            <div className="flex items-center gap-1 text-slate-500">
-              <Building2 className="h-3.5 w-3.5 text-blue-600" />
-              <span className="text-[8px] font-semibold">نمایندگی</span>
-            </div>
-            <span className="flex-1" />
-            <span className="max-w-[55%] truncate text-[8px] font-bold text-slate-800">
-              {item.agencyName}
-            </span>
+          <div className="card-row card-row-split">
+            <InfoCell
+              icon={Building2}
+              label="نمایندگی"
+              value={item.agencyName}
+              labelClassName="card-cell-label--compact"
+              valueClassName="card-cell-value--compact"
+            />
+            <InfoCell
+              icon={Package}
+              label="نوعیت بسته"
+              value={item.package}
+              valueDir="ltr"
+              tone="accent"
+              labelClassName="card-cell-label--package"
+              valueClassName="card-cell-value--package"
+            />
           </div>
         </div>
 
-        <div className="card-footer mt-auto flex flex-col gap-0.5 border-t border-slate-100 pt-0.5">
-          <div className="footer-top-row flex items-center gap-1">
-            <div className="footer-phone flex min-w-0 flex-1 items-center gap-1 rounded-md bg-slate-50 px-1.5 py-0.5 text-slate-700">
-              <Phone className="h-3.5 w-3.5 text-blue-700" />
-              <span dir="ltr" className="max-w-[72px] truncate text-[8px] font-bold">
+        <div className="card-footer">
+          <div className="footer-top-row">
+            <div className="footer-phone">
+              <span className="card-cell-meta footer-phone-label">
+                <Phone className="card-cell-icon" />
+                <span className="card-cell-label">شماره تماس</span>
+              </span>
+
+              <span dir="ltr" className="footer-phone-value">
                 {item.phoneNumber}
               </span>
             </div>
 
-            <div className="serial-badge rounded-md bg-slate-100 px-1.5 py-0.5 text-slate-700">
-              <span className="inline-flex items-center gap-0.5 text-[6px] font-bold">
-                <Hash className="h-2.5 w-2.5" />
-                مسلسل:
-                <span dir="ltr">{item.serialNumber}</span>
-              </span>
+            <div className="serial-badge">
+              <span dir="ltr">{item.serialNumber}</span>
             </div>
           </div>
 
-          <div className="footer-note rounded-md bg-slate-100 px-1 py-px text-center text-slate-700">
-            <span className="text-[7px] font-medium">
-              برای معلومات بسته خود 10.11.12.13 را در مرورگر تان جستجو کنید
-            </span>
+          <div className="footer-note">
+            <span>برای معلومات بسته خود 10.11.12.13 را در مرورگر تان جستجو کنید</span>
           </div>
         </div>
       </div>
@@ -136,4 +187,4 @@ const Card = ({ item }) => {
   );
 };
 
-export default Card;
+export default memo(Card);
