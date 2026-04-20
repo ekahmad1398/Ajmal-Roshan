@@ -1,4 +1,12 @@
-import React, { useDeferredValue, useMemo, useRef, useState } from "react";
+import React, {
+  startTransition,
+  useDeferredValue,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import {
   ArrowUp,
   CheckCircle2,
@@ -27,8 +35,10 @@ function App() {
   const [fileName, setFileName] = useState("");
   const [cardMeta, setCardMeta] = useState(initialFormState);
   const [isDragActive, setIsDragActive] = useState(false);
+  const [isPrintReady, setIsPrintReady] = useState(false);
   const fileInputRef = useRef(null);
   const dragCounterRef = useRef(0);
+  const [isPreparingPrint, startPrintTransition] = useTransition();
   const deferredCardMeta = useDeferredValue(cardMeta);
 
   const handleFile = (file) => {
@@ -38,7 +48,10 @@ function App() {
 
     setFileName(file.name);
     parseExcel(file, (result) => {
-      setRows(result);
+      startTransition(() => {
+        setRows(result);
+        setIsPrintReady(false);
+      });
     });
   };
 
@@ -52,6 +65,7 @@ function App() {
     setFileName("");
     setCardMeta(initialFormState);
     setIsDragActive(false);
+    setIsPrintReady(false);
     dragCounterRef.current = 0;
 
     if (fileInputRef.current) {
@@ -60,8 +74,52 @@ function App() {
   };
 
   const handlePrint = () => {
-    window.print();
+    if (rows.length === 0) {
+      return;
+    }
+
+    if (isPrintReady) {
+      window.print();
+      return;
+    }
+
+    startPrintTransition(() => {
+      setIsPrintReady(true);
+    });
   };
+
+  useEffect(() => {
+    if (!isPrintReady) {
+      return undefined;
+    }
+
+    let nestedFrameId = 0;
+    const frameId = window.requestAnimationFrame(() => {
+      nestedFrameId = window.requestAnimationFrame(() => {
+        window.print();
+      });
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+
+      if (nestedFrameId) {
+        window.cancelAnimationFrame(nestedFrameId);
+      }
+    };
+  }, [isPrintReady]);
+
+  useEffect(() => {
+    const handleAfterPrint = () => {
+      setIsPrintReady(false);
+    };
+
+    window.addEventListener("afterprint", handleAfterPrint);
+
+    return () => {
+      window.removeEventListener("afterprint", handleAfterPrint);
+    };
+  }, []);
 
   const handleDragEnter = (event) => {
     event.preventDefault();
@@ -281,7 +339,7 @@ function App() {
 
                 <div className="rounded-[26px] border border-white/15 bg-slate-950/30 p-4 backdrop-blur-xl sm:p-5">
                   <div dir="rtl" className="mb-4">
-                    <h2 className="text-lg font-bold text-white sm:text-xl">نمایندگی</h2>
+                    <h2 className="text-lg font-bold text-white sm:text-xl">اطلاعات کارت</h2>
                   </div>
 
                   <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-12">
@@ -363,12 +421,23 @@ function App() {
             <div className="screen-only mb-8 flex justify-center sm:justify-end">
               <button
                 onClick={handlePrint}
-                className="group relative w-full max-w-xs cursor-pointer overflow-hidden rounded-2xl bg-[linear-gradient(120deg,var(--theme-header),var(--theme-accent))] px-6 py-4 text-base font-bold text-white shadow-2xl shadow-orange-500/30 transition-all duration-300 hover:scale-[1.02] hover:shadow-orange-500/50 sm:w-auto sm:max-w-none sm:px-8"
+                disabled={isPreparingPrint}
+                className={`group relative w-full max-w-xs overflow-hidden rounded-2xl bg-[linear-gradient(120deg,var(--theme-header),var(--theme-accent))] px-6 py-4 text-base font-bold text-white shadow-2xl shadow-orange-500/30 transition-all duration-300 sm:w-auto sm:max-w-none sm:px-8 ${
+                  isPreparingPrint
+                    ? "cursor-wait opacity-85"
+                    : "cursor-pointer hover:scale-[1.02] hover:shadow-orange-500/50"
+                }`}
               >
                 <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-white/0 via-white/20 to-white/0 transition-transform duration-700 group-hover:translate-x-full" />
                 <span className="relative flex items-center justify-center gap-3">
                   <Printer className="h-5 w-5" />
-                  چاپ <span dir="ltr">{cards.length}</span> کارت
+                  {isPreparingPrint ? (
+                    "آماده‌سازی چاپ..."
+                  ) : (
+                    <>
+                      چاپ <span dir="ltr">{cards.length}</span> کارت
+                    </>
+                  )}
                 </span>
               </button>
             </div>
@@ -390,9 +459,11 @@ function App() {
                 <CardList data={cards} />
               </div>
 
-              <div id="printable-area" className="print-only">
-                <CardList data={cards} paginate />
-              </div>
+              {isPrintReady && (
+                <div id="printable-area" className="print-only">
+                  <CardList data={cards} paginate />
+                </div>
+              )}
             </div>
           )}
 
