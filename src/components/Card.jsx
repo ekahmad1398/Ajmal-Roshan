@@ -41,7 +41,6 @@ const headerStyle = {
 };
 
 const Card = ({ item }) => {
-
   return (
     <div
       dir="rtl"
@@ -103,7 +102,7 @@ const Card = ({ item }) => {
           </svg>
         </div>
 
-        <div className="card-header-content relative z-10 flex min-h-[44px] items-center justify-center pl-10 pr-14">
+        <div className="card-header-content relative z-10 flex min-h-[44px] items-center justify-center pl-10 pr-16">
           <div className="min-w-0 text-center">
             <h1 className="card-title text-[11px] font-extrabold leading-tight">
               شرکت خدمات انترنتی اجمل روښان
@@ -113,8 +112,8 @@ const Card = ({ item }) => {
             </p>
           </div>
 
-          <div className="card-logo-wrap absolute right-0 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-xl border border-white/30 bg-white/90 shadow-sm">
-            <img src="/logo.png" alt="logo" className="card-logo-img h-8.5 w-8.5 object-contain" />
+          <div className="card-logo-wrap absolute right-1 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-xl border border-white/30 bg-white/90 shadow-sm">
+            <img src="/logo.png" alt="logo" className="card-logo-img h-10 w-10 object-contain" />
           </div>
         </div>
       </div>

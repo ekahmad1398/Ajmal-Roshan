@@ -223,7 +223,7 @@ function App() {
                     <UploadCloud className="h-10 w-10 text-orange-200" />
                   </div>
 
-                  <h3 dir="rtl" className="mb-2 text-xl font-bold text-white sm:text-2xl">
+                  <h3 dir="rtl" className="mb-6 text-xl font-bold text-white sm:text-2xl">
                     {isDragActive ? (
                       "فایل را همین‌جا رها کنید"
                     ) : (
@@ -241,31 +241,10 @@ function App() {
                     )}
                   </h3>
 
-                  <p
-                    dir="rtl"
-                    className="mx-auto mb-5 flex max-w-2xl flex-wrap items-center justify-center gap-x-1 gap-y-1 text-sm leading-7 text-slate-200"
-                  >
-                    <span>فایل‌ها با پسوندهای</span>
-                    <span dir="ltr" className="font-semibold tracking-wide text-orange-200">
-                      .xlsx, .xls, .csv
-                    </span>
-                    <span>پشتیبانی می‌شوند.</span>
-                  </p>
-
                   <div className="inline-flex items-center gap-2 rounded-2xl bg-[linear-gradient(120deg,var(--theme-header),var(--theme-accent))] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-orange-500/20">
                     <ArrowUp className="h-4 w-4" />
                     انتخاب فایل
                   </div>
-
-                  <p
-                    dir="rtl"
-                    className="mt-4 flex flex-wrap items-center justify-center gap-x-1 gap-y-1 text-xs text-slate-300/75"
-                  >
-                    <span>فرمت‌های قابل پشتیبانی:</span>
-                    <span dir="ltr" className="font-semibold tracking-wide text-slate-200">
-                      .xlsx, .xls, .csv
-                    </span>
-                  </p>
                 </div>
               </div>
             ) : (
@@ -303,10 +282,6 @@ function App() {
                 <div className="rounded-[26px] border border-white/15 bg-slate-950/30 p-4 backdrop-blur-xl sm:p-5">
                   <div dir="rtl" className="mb-4">
                     <h2 className="text-lg font-bold text-white sm:text-xl">نمایندگی</h2>
-                    <p className="text-sm leading-7 text-white/65">
-                      این معلومات روی همه کارت‌ها اعمال می‌شود. چیدمان فرم هم برای موبایل و
-                      هم برای صفحه‌های بزرگ مرتب شده است.
-                    </p>
                   </div>
 
                   <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-12">
@@ -320,7 +295,7 @@ function App() {
                         value={cardMeta.packageName}
                         onChange={handleMetaChange}
                         dir="rtl"
-                        placeholder="مثلاً 20MB Unlimited"
+                        placeholder="XXXX"
                         className="w-full rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/35 focus:border-orange-400"
                       />
                     </label>
@@ -328,14 +303,14 @@ function App() {
                     <label className="block xl:col-span-4">
                       <span className="mb-2 flex items-center gap-2 text-sm text-white/80" dir="rtl">
                         <UserSquare2 className="h-4 w-4 text-orange-300" />
-                         نام نمایندگی
+                        نام نمایندگی
                       </span>
                       <input
                         name="agencyName"
                         value={cardMeta.agencyName}
                         onChange={handleMetaChange}
                         dir="rtl"
-                        placeholder="مثلاً بلخ"
+                        placeholder="XXXX"
                         className="w-full rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/35 focus:border-orange-400"
                       />
                     </label>
@@ -343,7 +318,7 @@ function App() {
                     <label className="block xl:col-span-3">
                       <span className="mb-2 flex items-center gap-2 text-sm text-white/80" dir="rtl">
                         <Phone className="h-4 w-4 text-orange-300" />
-                       شماره تماس
+                        شماره تماس
                       </span>
                       <input
                         name="phoneNumber"
@@ -445,8 +420,8 @@ function App() {
 
       <footer className="screen-only relative mt-auto border-t border-white/10 bg-slate-950/30 backdrop-blur-xl">
         <div className="mx-auto max-w-7xl px-4 py-5 text-center sm:px-6">
-          <p dir="rtl" className="text-xs tracking-wider text-slate-300/70">
-            © 2026 ترتیب دهنده احمد سیر رسولی
+          <p dir="ltr" className="text-xs tracking-wider text-slate-300/70">
+            © 2026 Prepared by Ahmad Seyar Rasoli
           </p>
         </div>
       </footer>
