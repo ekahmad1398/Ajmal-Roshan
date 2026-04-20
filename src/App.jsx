@@ -143,7 +143,7 @@ function App() {
 
             <div dir="rtl">
               <h1 className="text-xl font-black tracking-tight text-white sm:text-2xl">
-                شرکت خدمات انترنتی اجمل روشان
+                شرکت خدمات انترنتی اجمل روښان
               </h1>
               <p className="text-xs tracking-[0.35em] text-orange-100/70">
                 AJMAL ROSHAN FASTEST FOREVER
@@ -223,18 +223,33 @@ function App() {
                     <UploadCloud className="h-10 w-10 text-orange-200" />
                   </div>
 
-                  <h3 className="mb-2 text-xl font-bold text-white sm:text-2xl">
-                    {isDragActive
-                      ? "فایل را همین‌جا رها کنید"
-                      : "فایل Excel یا CSV را انتخاب یا درگ کنید"}
+                  <h3 dir="rtl" className="mb-2 text-xl font-bold text-white sm:text-2xl">
+                    {isDragActive ? (
+                      "فایل را همین‌جا رها کنید"
+                    ) : (
+                      <>
+                        فایل
+                        <span dir="ltr" className="mx-1 inline-block">
+                          Excel
+                        </span>
+                        یا
+                        <span dir="ltr" className="mx-1 inline-block">
+                          CSV
+                        </span>
+                        را انتخاب یا درگ کنید
+                      </>
+                    )}
                   </h3>
 
-                  <p dir="rtl" className="mx-auto mb-5 max-w-2xl text-sm leading-7 text-slate-200">
-                    فایل‌ها با پسوند 
-                    <span dir="ltr" className="px-1 font-semibold text-orange-200">
-                      .xlsx .xls .csv
+                  <p
+                    dir="rtl"
+                    className="mx-auto mb-5 flex max-w-2xl flex-wrap items-center justify-center gap-x-1 gap-y-1 text-sm leading-7 text-slate-200"
+                  >
+                    <span>فایل‌ها با پسوندهای</span>
+                    <span dir="ltr" className="font-semibold tracking-wide text-orange-200">
+                      .xlsx, .xls, .csv
                     </span>
-                    پشتیبانی می‌شوند.
+                    <span>پشتیبانی می‌شوند.</span>
                   </p>
 
                   <div className="inline-flex items-center gap-2 rounded-2xl bg-[linear-gradient(120deg,var(--theme-header),var(--theme-accent))] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-orange-500/20">
@@ -242,8 +257,14 @@ function App() {
                     انتخاب فایل
                   </div>
 
-                  <p className="mt-4 text-xs text-slate-300/75">
-                    Supported formats: .xlsx, .xls, .csv
+                  <p
+                    dir="rtl"
+                    className="mt-4 flex flex-wrap items-center justify-center gap-x-1 gap-y-1 text-xs text-slate-300/75"
+                  >
+                    <span>فرمت‌های قابل پشتیبانی:</span>
+                    <span dir="ltr" className="font-semibold tracking-wide text-slate-200">
+                      .xlsx, .xls, .csv
+                    </span>
                   </p>
                 </div>
               </div>
@@ -322,7 +343,7 @@ function App() {
                     <label className="block xl:col-span-3">
                       <span className="mb-2 flex items-center gap-2 text-sm text-white/80" dir="rtl">
                         <Phone className="h-4 w-4 text-orange-300" />
-                        رمز / شماره تماس
+                       شماره تماس
                       </span>
                       <input
                         name="phoneNumber"
@@ -402,9 +423,20 @@ function App() {
 
           {cards.length === 0 && !fileName && (
             <div className="screen-only py-16 text-center">
-              <div className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-6 py-3 text-sm text-white/50 backdrop-blur-xl">
+              <div
+                dir="rtl"
+                className="inline-flex flex-wrap items-center justify-center gap-x-1 gap-y-1 rounded-full border border-white/10 bg-white/5 px-6 py-3 text-sm text-white/50 backdrop-blur-xl"
+              >
                 <UploadCloud className="h-4 w-4" />
-                برای دیدن کارت‌ها فایل Excel یا CSV را انتخاب کنید
+                <span>برای دیدن کارت‌ها فایل</span>
+                <span dir="ltr" className="font-medium text-white/70">
+                  Excel
+                </span>
+                <span>یا</span>
+                <span dir="ltr" className="font-medium text-white/70">
+                  CSV
+                </span>
+                <span>را انتخاب کنید</span>
               </div>
             </div>
           )}
@@ -414,7 +446,7 @@ function App() {
       <footer className="screen-only relative mt-auto border-t border-white/10 bg-slate-950/30 backdrop-blur-xl">
         <div className="mx-auto max-w-7xl px-4 py-5 text-center sm:px-6">
           <p dir="rtl" className="text-xs tracking-wider text-slate-300/70">
-            © 2026 شرکت خدمات انترنتی اجمل روشان · تمامی حقوق محفوظ است
+            © 2026 ترتیب دهنده احمد سیر رسولی
           </p>
         </div>
       </footer>

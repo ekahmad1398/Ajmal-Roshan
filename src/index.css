@@ -4,8 +4,8 @@
   --theme-accent: #f97316;
   --theme-header: #062460;
   --sheet-width: 200mm;
-  --sheet-height: 287mm;
-  --sheet-card-height: 40.23mm;
+  --sheet-height: 291mm;
+  --sheet-card-height: 40.8mm;
   --sheet-columns: 3;
   --sheet-rows: 7;
   --sheet-gap-x: 1.15mm;
@@ -225,15 +225,15 @@ body::selection {
 }
 
 .card-cell-label--primary {
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .card-cell-label--compact {
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .card-cell-label--package {
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .card-cell-value {
@@ -250,16 +250,16 @@ body::selection {
 }
 
 .card-cell-value--primary {
-  font-size: 16px;
+  font-size: 19px;
 }
 
 .card-cell-value--compact {
-  font-size: 13px;
+  font-size: 16px;
 }
 
 .card-cell-value--package {
   color: #c2410c;
-  font-size: 16px;
+  font-size: 19px;
 }
 
 .footer-top-row {
@@ -279,7 +279,7 @@ body::selection {
 
 .footer-phone {
   min-width: 0;
-  min-height: 38px;
+  min-height: 50px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -287,22 +287,22 @@ body::selection {
   border: 1px solid #e7edf5;
   border-radius: 16px;
   background: linear-gradient(180deg, #f8fbff, #eef4fb);
-  padding: 9px 12px;
+  padding: 8px 12px;
   color: #334155;
 }
 
 .serial-badge {
   display: inline-flex;
-  min-width: 64px;
+  min-width: 70px;
   min-height: 38px;
   align-items: center;
   justify-content: center;
   border: 1px solid #dbe4f0;
   border-radius: 16px;
   background: linear-gradient(180deg, #edf2f8, #e2e8f0);
-  padding: 9px 14px;
+  padding: 9px 16px;
   color: #334155;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 800;
 }
 
@@ -317,18 +317,19 @@ body::selection {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #e5ebf3;
+  border: 1px solid #d7e1ee;
   border-radius: 16px;
   background: linear-gradient(180deg, #f8fbff, #eff4fa);
   padding: 6px 10px;
-  color: #475569;
-  font-size: 11px;
+  color: #020617;
+  font-size: 12px;
+  font-weight: 700;
   line-height: 1.35;
   text-align: center;
 }
 
 .footer-phone-value {
-  flex: 1 1 auto;
+  flex: 0 0 auto;
   min-width: 0;
   overflow: hidden;
   width: auto;
@@ -336,12 +337,21 @@ body::selection {
   text-overflow: ellipsis;
   white-space: nowrap;
   color: #0f172a;
-  font-size: 13px;
+  font-size: 24px;
   font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.03em;
+}
+
+.footer-phone-label {
+  flex: 0 1 auto;
+  min-width: 0;
+  width: auto;
+  justify-content: flex-start;
 }
 
 .footer-phone-label .card-cell-label {
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .card-row-split > div {
@@ -370,7 +380,7 @@ body::selection {
 }
 
 .preview-page .card-header {
-  min-height: 9.4mm;
+  min-height: 9.9mm;
   padding: 0.8mm 0.95mm 1.2mm;
   display: flex;
   align-items: center;
@@ -378,7 +388,7 @@ body::selection {
 
 .preview-page .card-header-content {
   width: 100%;
-  min-height: 8.8mm;
+  min-height: 9.2mm;
   padding-left: 7.8mm;
   padding-right: 13.2mm;
   justify-content: center;
@@ -397,25 +407,25 @@ body::selection {
 }
 
 .preview-page .card-logo-wrap {
-  width: 7.2mm;
-  height: 7.2mm;
-  flex: 0 0 7.2mm;
+  width: 7.5mm;
+  height: 7.5mm;
+  flex: 0 0 7.5mm;
 }
 
 .preview-page .card-logo-img {
-  width: 5.4mm;
-  height: 5.4mm;
+  width: 5.7mm;
+  height: 5.7mm;
 }
 
 .preview-page .card-title {
-  font-size: 7.3px;
+  font-size: 7.8px;
   line-height: 1.08;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
 .preview-page .card-subtitle {
-  font-size: 6.5px;
+  font-size: 6.9px;
   line-height: 1.08;
   white-space: nowrap;
 }
@@ -439,7 +449,7 @@ body::selection {
 }
 
 .preview-page .card-cell {
-  min-height: 7.9mm;
+  min-height: 8.45mm;
   border-radius: 1.5mm;
   padding: 0.52mm 0.7mm;
 }
@@ -450,34 +460,34 @@ body::selection {
 
 .preview-page .card-cell-meta {
   gap: 0.42mm;
-  font-size: 4.85px;
+  font-size: 5.45px;
 }
 
 .preview-page .card-cell-icon {
-  width: 1.55mm;
-  height: 1.55mm;
+  width: 1.7mm;
+  height: 1.7mm;
 }
 
 .preview-page .card-cell-value {
-  font-size: 6.6px;
+  font-size: 7.5px;
 }
 
 .preview-page .card-cell-label--primary,
 .preview-page .card-cell-label--package {
-  font-size: 6.9px;
+  font-size: 8px;
 }
 
 .preview-page .card-cell-label--compact {
-  font-size: 5.35px;
+  font-size: 6.45px;
 }
 
 .preview-page .card-cell-value--primary,
 .preview-page .card-cell-value--package {
-  font-size: 6.9px;
+  font-size: 8.35px;
 }
 
 .preview-page .card-cell-value--compact {
-  font-size: 5.35px;
+  font-size: 7px;
 }
 
 .preview-page .card-footer {
@@ -492,19 +502,21 @@ body::selection {
 }
 
 .preview-page .footer-phone {
-  min-height: 4.8mm;
-  padding: 0.38mm 0.58mm;
-  gap: 0.55mm;
+  min-height: 6.3mm;
+  padding: 0.34mm 0.52mm;
+  gap: 0.7mm;
   border-radius: 1.25mm;
 }
 
 .preview-page .footer-phone-label {
-  font-size: 4.7px;
+  width: auto;
+  font-size: 4.8px;
 }
 
 .preview-page .footer-phone-value {
-  font-size: 4.95px;
+  font-size: 8.7px;
   line-height: 1;
+  letter-spacing: 0.03em;
 }
 
 .preview-page .footer-phone-label .card-cell-label {
@@ -512,18 +524,18 @@ body::selection {
 }
 
 .preview-page .serial-badge {
-  min-width: 12.5mm;
+  min-width: 13.6mm;
   min-height: 4.8mm;
   border-radius: 1.25mm;
-  padding: 0.38mm 0.58mm;
-  font-size: 4.65px;
+  padding: 0.38mm 0.72mm;
+  font-size: 5.6px;
 }
 
 .preview-page .footer-note {
   min-height: 3mm;
   padding: 0.18mm 0.34mm;
   border-radius: 1.25mm;
-  font-size: 4.1px;
+  font-size: 4.75px;
   line-height: 1.2;
 }
 
@@ -569,7 +581,7 @@ body::selection {
 @media print {
   @page {
     size: A4;
-    margin: 5mm;
+    margin: 3mm 5mm;
   }
 
   html,
@@ -669,7 +681,7 @@ body::selection {
 
   .print-page .card-header {
     padding: 0.8mm 0.95mm 1.2mm !important;
-    min-height: 9.4mm;
+    min-height: 9.9mm;
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -677,7 +689,7 @@ body::selection {
 
   .print-page .card-header-content {
     width: 100% !important;
-    min-height: 8.8mm !important;
+    min-height: 9.2mm !important;
     padding-left: 7.8mm !important;
     padding-right: 13.2mm !important;
     justify-content: center !important;
@@ -696,25 +708,25 @@ body::selection {
   }
 
   .print-page .card-logo-wrap {
-    width: 7.2mm !important;
-    height: 7.2mm !important;
-    flex: 0 0 7.2mm;
+    width: 7.5mm !important;
+    height: 7.5mm !important;
+    flex: 0 0 7.5mm;
   }
 
   .print-page .card-logo-img {
-    width: 5.4mm !important;
-    height: 5.4mm !important;
+    width: 5.7mm !important;
+    height: 5.7mm !important;
   }
 
   .print-page .card-title {
-    font-size: 7.3px !important;
+    font-size: 7.8px !important;
     line-height: 1.08 !important;
     white-space: nowrap !important;
     text-overflow: ellipsis !important;
   }
 
   .print-page .card-subtitle {
-    font-size: 6.5px !important;
+    font-size: 6.9px !important;
     line-height: 1.08 !important;
     white-space: nowrap !important;
   }
@@ -740,7 +752,7 @@ body::selection {
   }
 
   .print-page .card-cell {
-    min-height: 7.9mm;
+    min-height: 8.45mm;
     border-radius: 1.5mm;
     padding: 0.52mm 0.7mm;
   }
@@ -751,34 +763,34 @@ body::selection {
 
   .print-page .card-cell-meta {
     gap: 0.42mm !important;
-    font-size: 4.85px !important;
+    font-size: 5.45px !important;
   }
 
   .print-page .card-cell-icon {
-    width: 1.55mm !important;
-    height: 1.55mm !important;
+    width: 1.7mm !important;
+    height: 1.7mm !important;
   }
 
   .print-page .card-cell-value {
-    font-size: 6.6px !important;
+    font-size: 7.5px !important;
   }
 
   .print-page .card-cell-label--primary,
   .print-page .card-cell-label--package {
-    font-size: 6.9px !important;
+    font-size: 8px !important;
   }
 
   .print-page .card-cell-label--compact {
-    font-size: 5.35px !important;
+    font-size: 6.45px !important;
   }
 
   .print-page .card-cell-value--primary,
   .print-page .card-cell-value--package {
-    font-size: 6.9px !important;
+    font-size: 8.35px !important;
   }
 
   .print-page .card-cell-value--compact {
-    font-size: 5.35px !important;
+    font-size: 7px !important;
   }
 
   .print-page .card-footer {
@@ -793,19 +805,21 @@ body::selection {
   }
 
   .print-page .footer-phone {
-    min-height: 4.8mm;
-    padding: 0.38mm 0.58mm !important;
-    gap: 0.55mm !important;
+    min-height: 6.3mm;
+    padding: 0.34mm 0.52mm !important;
+    gap: 0.7mm !important;
     border-radius: 1.25mm !important;
   }
 
   .print-page .footer-phone-label {
-    font-size: 4.7px !important;
+    width: auto;
+    font-size: 4.8px !important;
   }
 
   .print-page .footer-phone-value {
-    font-size: 4.95px !important;
+    font-size: 8.7px !important;
     line-height: 1 !important;
+    letter-spacing: 0.03em;
   }
 
   .print-page .footer-phone-label .card-cell-label {
@@ -814,10 +828,10 @@ body::selection {
 
   .print-page .card-footer .serial-badge {
     border-radius: 1.25mm !important;
-    min-width: 12.5mm;
+    min-width: 13.6mm;
     min-height: 4.8mm;
-    padding: 0.38mm 0.58mm !important;
-    font-size: 4.65px !important;
+    padding: 0.38mm 0.72mm !important;
+    font-size: 5.6px !important;
   }
 
   .print-page .serial-badge span {
@@ -830,7 +844,7 @@ body::selection {
     min-height: 3mm;
     padding: 0.18mm 0.34mm !important;
     border-radius: 1.25mm !important;
-    font-size: 4.1px !important;
+    font-size: 4.75px !important;
     line-height: 1.2 !important;
   }
 

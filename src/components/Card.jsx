@@ -56,12 +56,12 @@ const Card = ({ item }) => {
           <div className="absolute left-6 top-3 h-5 w-20 rounded-full bg-white/15 blur-md" />
         </div>
 
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-between px-3 opacity-30">
-          <Router className="h-4.5 w-4.5" />
-          <Wifi className="h-4.5 w-4.5" />
+        <div className="pointer-events-none absolute inset-x-3 top-2 z-10 flex items-center justify-between">
+          <Router className="h-4.5 w-4.5 text-white/55" />
+          <Wifi className="h-4.5 w-4.5 text-white" />
         </div>
 
-        <div className="card-wave card-wave--primary absolute inset-x-0 bottom-0 overflow-hidden leading-none opacity-90">
+        <div className="card-wave card-wave--primary pointer-events-none absolute inset-x-0 bottom-0 z-0 overflow-hidden leading-none opacity-80">
           <svg
             viewBox="0 0 400 32"
             preserveAspectRatio="none"
@@ -75,7 +75,7 @@ const Card = ({ item }) => {
           </svg>
         </div>
 
-        <div className="card-wave card-wave--secondary absolute inset-x-0 bottom-0 overflow-hidden leading-none opacity-80">
+        <div className="card-wave card-wave--secondary pointer-events-none absolute inset-x-0 bottom-0 z-0 overflow-hidden leading-none opacity-70">
           <svg
             viewBox="0 0 400 42"
             preserveAspectRatio="none"
@@ -89,7 +89,7 @@ const Card = ({ item }) => {
           </svg>
         </div>
 
-        <div className="card-wave card-wave--glow absolute inset-x-0 bottom-[1px] overflow-hidden leading-none opacity-45">
+        <div className="card-wave card-wave--glow pointer-events-none absolute inset-x-0 bottom-0 z-0 overflow-hidden leading-none opacity-45">
           <svg
             viewBox="0 0 400 30"
             preserveAspectRatio="none"
@@ -103,10 +103,10 @@ const Card = ({ item }) => {
           </svg>
         </div>
 
-        <div className="card-header-content relative flex min-h-[44px] items-center justify-center pl-10 pr-14">
+        <div className="card-header-content relative z-10 flex min-h-[44px] items-center justify-center pl-10 pr-14">
           <div className="min-w-0 text-center">
             <h1 className="card-title text-[11px] font-extrabold leading-tight">
-              شرکت خدمات انترنتی اجمل روشان
+              شرکت خدمات انترنتی اجمل روښان
             </h1>
             <p className="card-subtitle text-[8px] text-white/80">
               Ajmal Roshan Fastest Forever
@@ -145,8 +145,8 @@ const Card = ({ item }) => {
               icon={Building2}
               label="نمایندگی"
               value={item.agencyName}
-              labelClassName="card-cell-label--compact"
-              valueClassName="card-cell-value--compact"
+              labelClassName="card-cell-label--primary"
+              valueClassName="card-cell-value--primary"
             />
             <InfoCell
               icon={Package}
