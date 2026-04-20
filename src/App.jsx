@@ -143,7 +143,7 @@ function App() {
 
             <div dir="rtl">
               <h1 className="text-xl font-black tracking-tight text-white sm:text-2xl">
-                اجمل روشان
+                شرکت خدمات انترنتی اجمل روشان
               </h1>
               <p className="text-xs tracking-[0.35em] text-orange-100/70">
                 AJMAL ROSHAN FASTEST FOREVER
@@ -230,7 +230,7 @@ function App() {
                   </h3>
 
                   <p dir="rtl" className="mx-auto mb-5 max-w-2xl text-sm leading-7 text-slate-200">
-                    حالا هم با کلیک و هم با درگ‌ودراپ فایل گرفته می‌شود. فقط فایل‌های
+                    فایل‌ها با پسوند 
                     <span dir="ltr" className="px-1 font-semibold text-orange-200">
                       .xlsx .xls .csv
                     </span>
@@ -307,14 +307,14 @@ function App() {
                     <label className="block xl:col-span-4">
                       <span className="mb-2 flex items-center gap-2 text-sm text-white/80" dir="rtl">
                         <UserSquare2 className="h-4 w-4 text-orange-300" />
-                        مشخصات / نام نمایندگی
+                         نام نمایندگی
                       </span>
                       <input
                         name="agencyName"
                         value={cardMeta.agencyName}
                         onChange={handleMetaChange}
                         dir="rtl"
-                        placeholder="مثلاً بلخ دشت برچی"
+                        placeholder="مثلاً بلخ"
                         className="w-full rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/35 focus:border-orange-400"
                       />
                     </label>
