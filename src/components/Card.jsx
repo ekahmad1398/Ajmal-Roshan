@@ -4,6 +4,7 @@ import {
   Lock,
   Package,
   Phone,
+  Router,
   User,
   Wifi,
 } from "lucide-react";
@@ -40,6 +41,15 @@ const headerStyle = {
 };
 
 const Card = ({ item }) => {
+  const companyName = item.companyName || "شرکت خدمات انترنتی اجمل روشان";
+  const logoSrc = item.logoSrc || "/logo.png";
+  const leftLogoSrc = item.leftLogoSrc || "/logo.png";
+  const slogan = item.slogan || "Ajmal Roshan Fastest Forever";
+  const hasLeftLogo = Boolean(item.showLeftLogo);
+  const headerContentClassName = `card-header-content relative flex min-h-[44px] items-center justify-center pr-14 ${
+    hasLeftLogo ? "card-header-content--dual-logo pl-14" : "pl-10"
+  }`;
+
   return (
     <div
       dir="rtl"
@@ -54,11 +64,12 @@ const Card = ({ item }) => {
           <div className="absolute left-6 top-3 h-5 w-20 rounded-full bg-white/15 blur-md" />
         </div>
 
-        <div className="pointer-events-none absolute inset-x-3 top-2 z-10 flex items-center justify-end">
-          <Wifi className="h-4.5 w-4.5 text-white" />
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-between px-3 opacity-30">
+          <Router className="h-4.5 w-4.5" />
+          <Wifi className="h-4.5 w-4.5 " />
         </div>
 
-        <div className="card-wave card-wave--primary pointer-events-none absolute inset-x-0 bottom-0 z-0 overflow-hidden leading-none opacity-80">
+        <div className="card-wave card-wave--primary absolute inset-x-0 bottom-0 overflow-hidden leading-none opacity-90">
           <svg
             viewBox="0 0 400 32"
             preserveAspectRatio="none"
@@ -72,7 +83,7 @@ const Card = ({ item }) => {
           </svg>
         </div>
 
-        <div className="card-wave card-wave--secondary pointer-events-none absolute inset-x-0 bottom-0 z-0 overflow-hidden leading-none opacity-70">
+        <div className="card-wave card-wave--secondary absolute inset-x-0 bottom-0 overflow-hidden leading-none opacity-80">
           <svg
             viewBox="0 0 400 42"
             preserveAspectRatio="none"
@@ -86,7 +97,7 @@ const Card = ({ item }) => {
           </svg>
         </div>
 
-        <div className="card-wave card-wave--glow pointer-events-none absolute inset-x-0 bottom-0 z-0 overflow-hidden leading-none opacity-45">
+        <div className="card-wave card-wave--glow absolute inset-x-0 bottom-[1px] overflow-hidden leading-none opacity-45">
           <svg
             viewBox="0 0 400 30"
             preserveAspectRatio="none"
@@ -100,22 +111,25 @@ const Card = ({ item }) => {
           </svg>
         </div>
 
-        <div className="card-header-content relative z-10 flex min-h-[44px] items-center justify-center pl-10 pr-16">
+        <div className={headerContentClassName}>
           <div className="min-w-0 text-center">
             <h1 className="card-title text-[11px] font-extrabold leading-tight">
-              شرکت خدمات انترنتی اجمل روښان
+              {companyName}
             </h1>
             <p className="card-subtitle text-[8px] text-white/80">
-              Ajmal Roshan Fastest Forever
+              {slogan}
             </p>
           </div>
 
-          <div className="card-logo-wrap absolute right-1 top-1/2 z-10 h-12 w-12 -translate-y-1/2">
-            <div className="absolute inset-0.5 rounded-full bg-white/95 blur-lg" />
-            <div className="relative flex h-full w-full items-center justify-center rounded-xl border border-white/50 bg-white/96 shadow-sm backdrop-blur-md">
-              <img src="/logo.png" alt="logo" className="card-logo-img h-10 w-10 object-contain" />
-            </div>
+          <div className="card-logo-wrap absolute right-0 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-xl border border-white/30 bg-white/90 shadow-sm">
+            <img src={logoSrc} alt={companyName} className="card-logo-img h-8.5 w-8.5 object-contain" />
           </div>
+
+          {hasLeftLogo && (
+            <div className="card-logo-wrap card-logo-wrap--left absolute left-0 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-xl border border-white/30 bg-white/90 shadow-sm">
+              <img src={leftLogoSrc} alt={companyName} className="card-logo-img h-8.5 w-8.5 object-contain" />
+            </div>
+          )}
         </div>
       </div>
 
@@ -165,10 +179,10 @@ const Card = ({ item }) => {
             <div className="footer-phone">
               <span className="card-cell-meta footer-phone-label">
                 <Phone className="card-cell-icon" />
-                <span className="card-cell-label">شماره تماس</span>
+                <span className="card-cell-label text-3">شماره تماس</span>
               </span>
 
-              <span dir="ltr" className="footer-phone-value">
+              <span dir="ltr" className="footer-phone-value ">
                 {item.phoneNumber}
               </span>
             </div>

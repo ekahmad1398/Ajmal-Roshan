@@ -1,5 +1,6 @@
 import React, {
   startTransition,
+  useCallback,
   useDeferredValue,
   useEffect,
   useMemo,
@@ -11,9 +12,11 @@ import {
   ArrowUp,
   CheckCircle2,
   FileSpreadsheet,
+  Image,
   Palette,
   Phone,
   Printer,
+  Rows2,
   UploadCloud,
   UserSquare2,
   WalletCards,
@@ -22,10 +25,21 @@ import {
 import CardList from "./components/CardList";
 import { parseExcel } from "./utils/parseExcel";
 
+const defaultCompanyName = "شرکت خدمات انترنتی اجمل روشان";
+const defaultLogoSrc = "/logo.png";
+const defaultSlogan = "Ajmal Roshan Fastest Forever";
+
 const initialFormState = {
   packageName: "",
   agencyName: "",
   phoneNumber: "",
+  companyName: defaultCompanyName,
+  logoSrc: defaultLogoSrc,
+  logoName: "logo.png",
+  leftLogoSrc: defaultLogoSrc,
+  leftLogoName: "logo.png",
+  showLeftLogo: false,
+  slogan: defaultSlogan,
   headerColor: "#062460",
   backgroundColor: "#f97316",
 };
@@ -37,6 +51,10 @@ function App() {
   const [isDragActive, setIsDragActive] = useState(false);
   const [isPrintReady, setIsPrintReady] = useState(false);
   const fileInputRef = useRef(null);
+  const logoInputRef = useRef(null);
+  const leftLogoInputRef = useRef(null);
+  const logoObjectUrlRef = useRef(null);
+  const leftLogoObjectUrlRef = useRef(null);
   const dragCounterRef = useRef(0);
   const [isPreparingPrint, startPrintTransition] = useTransition();
   const deferredCardMeta = useDeferredValue(cardMeta);
@@ -56,11 +74,89 @@ function App() {
   };
 
   const handleMetaChange = (event) => {
-    const { name, value } = event.target;
-    setCardMeta((current) => ({ ...current, [name]: value }));
+    const { checked, name, type, value } = event.target;
+    const nextValue = type === "checkbox" ? checked : value;
+
+    setCardMeta((current) => ({ ...current, [name]: nextValue }));
+  };
+
+  const revokeSelectedLogo = useCallback(() => {
+    if (logoObjectUrlRef.current) {
+      URL.revokeObjectURL(logoObjectUrlRef.current);
+      logoObjectUrlRef.current = null;
+    }
+  }, []);
+
+  const revokeSelectedLeftLogo = useCallback(() => {
+    if (leftLogoObjectUrlRef.current) {
+      URL.revokeObjectURL(leftLogoObjectUrlRef.current);
+      leftLogoObjectUrlRef.current = null;
+    }
+  }, []);
+
+  const handleLogoFile = (file) => {
+    if (!file) {
+      return;
+    }
+
+    revokeSelectedLogo();
+
+    const logoSrc = URL.createObjectURL(file);
+    logoObjectUrlRef.current = logoSrc;
+
+    setCardMeta((current) => ({
+      ...current,
+      logoSrc,
+      logoName: file.name,
+    }));
+  };
+
+  const handleLeftLogoFile = (file) => {
+    if (!file) {
+      return;
+    }
+
+    revokeSelectedLeftLogo();
+
+    const leftLogoSrc = URL.createObjectURL(file);
+    leftLogoObjectUrlRef.current = leftLogoSrc;
+
+    setCardMeta((current) => ({
+      ...current,
+      leftLogoSrc,
+      leftLogoName: file.name,
+    }));
+  };
+
+  const resetLogo = () => {
+    revokeSelectedLogo();
+    setCardMeta((current) => ({
+      ...current,
+      logoSrc: defaultLogoSrc,
+      logoName: "logo.png",
+    }));
+
+    if (logoInputRef.current) {
+      logoInputRef.current.value = "";
+    }
+  };
+
+  const resetLeftLogo = () => {
+    revokeSelectedLeftLogo();
+    setCardMeta((current) => ({
+      ...current,
+      leftLogoSrc: defaultLogoSrc,
+      leftLogoName: "logo.png",
+    }));
+
+    if (leftLogoInputRef.current) {
+      leftLogoInputRef.current.value = "";
+    }
   };
 
   const clearFile = () => {
+    revokeSelectedLogo();
+    revokeSelectedLeftLogo();
     setRows([]);
     setFileName("");
     setCardMeta(initialFormState);
@@ -70,6 +166,14 @@ function App() {
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
+    }
+
+    if (logoInputRef.current) {
+      logoInputRef.current.value = "";
+    }
+
+    if (leftLogoInputRef.current) {
+      leftLogoInputRef.current.value = "";
     }
   };
 
@@ -121,6 +225,11 @@ function App() {
     };
   }, []);
 
+  useEffect(() => () => {
+    revokeSelectedLogo();
+    revokeSelectedLeftLogo();
+  }, [revokeSelectedLogo, revokeSelectedLeftLogo]);
+
   const handleDragEnter = (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -162,9 +271,24 @@ function App() {
         package: deferredCardMeta.packageName.trim() || item.package || "بدون بسته",
         agencyName: deferredCardMeta.agencyName.trim() || "نمایندگی ثبت نشده",
         phoneNumber: deferredCardMeta.phoneNumber.trim() || "شماره تماس ثبت نشده",
+        companyName: deferredCardMeta.companyName.trim() || defaultCompanyName,
+        logoSrc: deferredCardMeta.logoSrc || defaultLogoSrc,
+        leftLogoSrc: deferredCardMeta.leftLogoSrc || defaultLogoSrc,
+        showLeftLogo: deferredCardMeta.showLeftLogo,
+        slogan: deferredCardMeta.slogan.trim() || defaultSlogan,
         serialNumber: `#${index + 1}`,
       })),
-    [rows, deferredCardMeta.packageName, deferredCardMeta.agencyName, deferredCardMeta.phoneNumber],
+    [
+      rows,
+      deferredCardMeta.packageName,
+      deferredCardMeta.agencyName,
+      deferredCardMeta.phoneNumber,
+      deferredCardMeta.companyName,
+      deferredCardMeta.logoSrc,
+      deferredCardMeta.leftLogoSrc,
+      deferredCardMeta.showLeftLogo,
+      deferredCardMeta.slogan,
+    ],
   );
 
   const pageStyle = useMemo(
@@ -192,8 +316,8 @@ function App() {
               <div className="absolute inset-0 rounded-2xl bg-[linear-gradient(135deg,var(--theme-accent),var(--theme-header))] blur-lg opacity-45" />
               <div className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl border border-white/20 bg-[linear-gradient(135deg,var(--theme-header),var(--theme-accent))] shadow-2xl">
                 <img
-                  src="/logo.png"
-                  alt="Ajmal Roshan"
+                  src={cardMeta.logoSrc || defaultLogoSrc}
+                  alt={cardMeta.companyName || defaultCompanyName}
                   className="h-8 w-8 object-contain brightness-0 invert"
                 />
               </div>
@@ -201,7 +325,7 @@ function App() {
 
             <div dir="rtl">
               <h1 className="text-xl font-black tracking-tight text-white sm:text-2xl">
-                شرکت خدمات انترنتی اجمل روښان
+                {cardMeta.companyName || defaultCompanyName}
               </h1>
               <p className="text-xs tracking-[0.35em] text-orange-100/70">
                 AJMAL ROSHAN FASTEST FOREVER
@@ -342,9 +466,129 @@ function App() {
                     <h2 className="text-lg font-bold text-white sm:text-xl">اطلاعات کارت</h2>
                   </div>
 
-                  <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-12">
-                    <label className="block xl:col-span-3">
-                      <span className="mb-2 flex items-center gap-2 text-sm text-white/80" dir="rtl">
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    <label className="flex flex-col gap-2">
+                      <span className="flex items-center gap-2 text-sm text-white/80" dir="rtl">
+                        <UserSquare2 className="h-4 w-4 text-orange-300" />
+                        نام شرکت
+                      </span>
+                      <input
+                        name="companyName"
+                        value={cardMeta.companyName}
+                        onChange={handleMetaChange}
+                        dir="rtl"
+                        placeholder={defaultCompanyName}
+                        className="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-white/35 focus:border-orange-400"
+                      />
+                    </label>
+
+                    <label className="flex flex-col gap-2">
+                      <span className="flex items-center gap-2 text-sm text-white/80" dir="rtl">
+                        <Image className="h-4 w-4 text-orange-300" />
+                        لوگوی کارت
+                      </span>
+                      <input
+                        ref={logoInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={(event) => {
+                          const file = event.target.files?.[0];
+                          handleLogoFile(file);
+                        }}
+                        className="hidden"
+                      />
+                      <div className="flex items-center gap-2 rounded-xl border border-white/15 bg-white/10 px-3 py-2">
+                        <button
+                          type="button"
+                          onClick={() => logoInputRef.current?.click()}
+                          className="shrink-0 rounded-lg bg-white/15 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-white/25"
+                        >
+                          انتخاب
+                        </button>
+                        <span dir="ltr" className="min-w-0 flex-1 truncate text-sm text-white/65">
+                          {cardMeta.logoName}
+                        </span>
+                        {cardMeta.logoSrc !== defaultLogoSrc && (
+                          <button
+                            type="button"
+                            onClick={resetLogo}
+                            className="shrink-0 rounded-lg border border-white/10 p-1.5 text-white/70 transition hover:border-red-400/40 hover:bg-red-500/20 hover:text-red-200"
+                            aria-label="Reset logo"
+                          >
+                            <X className="h-3.5 w-3.5" />
+                          </button>
+                        )}
+                      </div>
+                    </label>
+
+                    <label className="flex flex-col gap-2">
+                      <span className="flex items-center gap-2 text-sm text-white/80" dir="rtl">
+                        <Palette className="h-4 w-4 text-orange-300" />
+                        شعار شرکت
+                      </span>
+                      <input
+                        name="slogan"
+                        value={cardMeta.slogan}
+                        onChange={handleMetaChange}
+                        dir="ltr"
+                        placeholder={defaultSlogan}
+                        className="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-white/35 focus:border-orange-400"
+                      />
+                    </label>
+
+                    <div className="flex flex-col gap-2 rounded-xl border border-white/15 bg-white/10 p-3">
+                      <label className="flex items-center justify-between gap-2">
+                        <span className="flex items-center gap-2 text-sm font-medium text-white/80" dir="rtl">
+                          <Rows2 className="h-4 w-4 text-orange-300" />
+                          لوگوی دوم در سمت چپ
+                        </span>
+                        <input
+                          name="showLeftLogo"
+                          type="checkbox"
+                          checked={cardMeta.showLeftLogo}
+                          onChange={handleMetaChange}
+                          className="h-4 w-4 cursor-pointer accent-orange-500"
+                        />
+                      </label>
+
+                      {cardMeta.showLeftLogo && (
+                        <div className="flex items-center gap-2 border-t border-white/10 pt-2">
+                          <input
+                            ref={leftLogoInputRef}
+                            type="file"
+                            accept="image/*"
+                            onChange={(event) => {
+                              const file = event.target.files?.[0];
+                              handleLeftLogoFile(file);
+                            }}
+                            className="hidden"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => leftLogoInputRef.current?.click()}
+                            className="shrink-0 rounded-lg bg-white/15 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-white/25"
+                          >
+                            انتخاب
+                          </button>
+                          <span dir="ltr" className="min-w-0 flex-1 truncate text-sm text-white/65">
+                            {cardMeta.leftLogoName}
+                          </span>
+                          {cardMeta.leftLogoSrc !== defaultLogoSrc && (
+                            <button
+                              type="button"
+                              onClick={resetLeftLogo}
+                              className="shrink-0 rounded-lg border border-white/10 p-1.5 text-white/70 transition hover:border-red-400/40 hover:bg-red-500/20 hover:text-red-200"
+                              aria-label="Reset left logo"
+                            >
+                              <X className="h-3.5 w-3.5" />
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    <label className="flex flex-col gap-2">
+                      <span className="flex items-center gap-2 text-sm text-white/80" dir="rtl">
                         <WalletCards className="h-4 w-4 text-orange-300" />
                         نوعیت بسته
                       </span>
@@ -354,12 +598,12 @@ function App() {
                         onChange={handleMetaChange}
                         dir="rtl"
                         placeholder="XXXX"
-                        className="w-full rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/35 focus:border-orange-400"
+                        className="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-white/35 focus:border-orange-400"
                       />
                     </label>
 
-                    <label className="block xl:col-span-4">
-                      <span className="mb-2 flex items-center gap-2 text-sm text-white/80" dir="rtl">
+                    <label className="flex flex-col gap-2">
+                      <span className="flex items-center gap-2 text-sm text-white/80" dir="rtl">
                         <UserSquare2 className="h-4 w-4 text-orange-300" />
                         نام نمایندگی
                       </span>
@@ -369,12 +613,12 @@ function App() {
                         onChange={handleMetaChange}
                         dir="rtl"
                         placeholder="XXXX"
-                        className="w-full rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/35 focus:border-orange-400"
+                        className="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-white/35 focus:border-orange-400"
                       />
                     </label>
 
-                    <label className="block xl:col-span-3">
-                      <span className="mb-2 flex items-center gap-2 text-sm text-white/80" dir="rtl">
+                    <label className="flex flex-col gap-2">
+                      <span className="flex items-center gap-2 text-sm text-white/80" dir="rtl">
                         <Phone className="h-4 w-4 text-orange-300" />
                         شماره تماس
                       </span>
@@ -384,22 +628,22 @@ function App() {
                         onChange={handleMetaChange}
                         dir="ltr"
                         placeholder="07XXXXXXXX"
-                        className="w-full rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/35 focus:border-orange-400"
+                        className="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-white/35 focus:border-orange-400"
                       />
                     </label>
 
-                    <label className="block md:col-span-2 xl:col-span-2">
-                      <span className="mb-2 flex items-center gap-2 text-sm text-white/80" dir="rtl">
+                    <label className="flex flex-col gap-2">
+                      <span className="flex items-center gap-2 text-sm text-white/80" dir="rtl">
                         <Palette className="h-4 w-4 text-orange-300" />
                         رنگ هیدر کارت
                       </span>
-                      <div className="flex items-center gap-3 rounded-2xl border border-white/15 bg-white/10 px-3 py-2">
+                      <div className="flex items-center gap-2 rounded-xl border border-white/15 bg-white/10 px-3 py-2">
                         <input
                           name="headerColor"
                           type="color"
                           value={cardMeta.headerColor}
                           onChange={handleMetaChange}
-                          className="h-10 w-14 cursor-pointer rounded-lg border border-white/15 bg-transparent"
+                          className="h-8 w-10 cursor-pointer rounded-lg border border-white/15 bg-transparent"
                         />
                         <input
                           name="headerColor"

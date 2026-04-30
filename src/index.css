@@ -396,6 +396,11 @@ body::selection {
   justify-content: center;
 }
 
+.preview-page .card-header-content--dual-logo {
+  padding-left: 14.5mm;
+  padding-right: 14.5mm;
+}
+
 .preview-page .card-wave--primary svg {
   height: 1.9mm;
 }
@@ -695,6 +700,11 @@ body::selection {
     padding-left: 7.8mm !important;
     padding-right: 14.5mm !important;
     justify-content: center !important;
+  }
+
+  .print-page .card-header-content--dual-logo {
+    padding-left: 14.5mm !important;
+    padding-right: 14.5mm !important;
   }
 
   .print-page .card-wave--primary svg {
